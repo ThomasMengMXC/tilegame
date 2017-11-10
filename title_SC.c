@@ -16,27 +16,27 @@ static char logo[][50] = {
 	{"  \\_/ |_|_|\\___|  \\____/\\__,_|_| |_| |_|\\___|"},
 };
 
-void tile_sc_init(Scene *scene, Game *game) {
+void title_sc_init(Scene *scene, Game *game) {
 	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 	data->game = game;
 	scene->data = data;
 
-	scene->update = update;
-	scene->draw = draw;
-	scene->keyboard = keyboard;
+	scene->update = title_update;
+	scene->draw = title_draw;
+	scene->keyboard = title_keyboard;
 
-	scene->sc_entry = sc_entry;
-	scene->sc_exit = sc_exit;
+	scene->sc_entry = title_entry;
+	scene->sc_exit = title_exit;
 	return;
 }
 
-void update(void *args) {
+void title_update(void *args) {
 	return;
 }
-void draw(void *args) {
+void title_draw(void *args) {
 	return;
 }
-void keyboard(void *args, int ch) {
+void title_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	int oldPos = data->pos;
 	switch(ch){
@@ -63,9 +63,10 @@ void keyboard(void *args, int ch) {
 	return;
 }
 
-void sc_entry(void *args) {
+void title_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	data->btnCnt = 3;
+	data->pos = 0;
 	data->menu = malloc(sizeof(char *) * data->btnCnt);
 	data->menu[data->pos++] = "New Game";
 	data->menu[data->pos++] = "Continue";
@@ -77,7 +78,7 @@ void sc_entry(void *args) {
 	return;
 }
 
-void sc_exit(void *args) {
+void title_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	free(data->menu);
 	free(data);

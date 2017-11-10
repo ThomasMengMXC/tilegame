@@ -37,7 +37,7 @@ int ncurses_setup(void) {
 
 Game *game_setup(void) {
 	Game *game = malloc(sizeof(Game));
-	game->scCnt = 1;
+	game->scCnt = 3;
 	game->scene = NULL;
 	getmaxyx(stdscr, game->row, game->col);
 	return game;

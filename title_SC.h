@@ -11,13 +11,13 @@ typedef struct {
 	char shouldDraw;
 } TitleData;
 
-void tile_sc_init(Scene *scene, Game *game);
-void update(void *args);
-void draw(void *args);
-void keyboard(void *args, int ch);
+void title_sc_init(Scene *scene, Game *game);
+void title_draw(void *args);
+void title_update(void *args);
+void title_keyboard(void *args, int ch);
 
-void sc_entry(void *args);
-void sc_exit(void *args);
+void title_entry(void *args);
+void title_exit(void *args);
 void drawLogo(TitleData *data);
 void drawButtons(TitleData *data);
 void singleButton(TitleData *data, int i);
