@@ -40,6 +40,12 @@ void title_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	int oldPos = data->pos;
 	switch(ch){
+		case KEY_RESIZE:
+			getmaxyx(stdscr, data->game->row, data->game->col);
+			clear();
+			drawLogo(data);
+			drawButtons(data);
+			break;	
 		case KEY_UP:
 			if (data->pos > 0){
 				data->pos--;
@@ -56,7 +62,7 @@ void title_keyboard(void *args, int ch) {
 			break;
 		case 'z':
 			if (data->pos == 0) {
-				scene_change(data->game, 0, 2);
+				scene_change(data->game, 0, 1);
 			}
 			break;
 	}
@@ -81,7 +87,6 @@ void title_entry(void *args) {
 void title_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	free(data->menu);
-	free(data);
 	return;
 }
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "game.h"
 #include "scene.h"
+#include "unit.h"
 
 int main(int argc, char **argv) {
 	ncurses_setup();
@@ -10,6 +11,9 @@ int main(int argc, char **argv) {
 	scene_setup(game);
 	int ch = 0;
 	while((ch = getch()) != 'q') {
+		if (ch == KEY_RESIZE) {
+			getmaxyx(stdscr, game->row, game->col);
+		}
 		game->scene->draw(game->scene->data);
 		game->scene->update(game->scene->data);
 		game->scene->keyboard(game->scene->data, ch);
@@ -37,7 +41,7 @@ int ncurses_setup(void) {
 
 Game *game_setup(void) {
 	Game *game = malloc(sizeof(Game));
-	game->scCnt = 3;
+	game->sceneCnt = 3; // TEMPORARY VALUE
 	game->scene = NULL;
 	getmaxyx(stdscr, game->row, game->col);
 	return game;
