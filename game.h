@@ -8,6 +8,7 @@ typedef struct Game{
 	unsigned int sceneCnt;
 	UnitData *players;
 	unsigned int gold;
+	FILE *level;
 
 	FILE *read;
 	FILE *write;
