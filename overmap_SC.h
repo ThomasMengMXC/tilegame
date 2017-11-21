@@ -4,11 +4,17 @@
 #include "map.h"
 #include "unit.h"
 
+typedef enum {
+	PRE_PLAYER_PHASE,
+	PLAYER_MOVE,
+	ENEMY_PHASE,
+} OverMapState;
+
 typedef struct {
-	unsigned int playerCnt, enemyCnt;
 	Game *game;
 	MapData *map;
-	UnitData *players, *enemies;
+	Team *players, *enemies;
+	OverMapState state;
 } OverMapData;
 
 void overmap_sc_init(Scene *scene, Game *game);

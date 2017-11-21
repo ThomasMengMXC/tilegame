@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 #include "game.h"
 #include "scene.h"
 #include "unit.h"
@@ -43,11 +44,36 @@ Game *game_setup(void) {
 	Game *game = malloc(sizeof(Game));
 	game->sceneCnt = 3; // TEMPORARY VALUE
 	game->scene = NULL;
+
+	game->playerCnt = 0;
+	game->playerMax = 1;
+	game->units = calloc(game->playerMax, sizeof(Unit));
+
+	Unit player = {
+		.hp = 10,
+		.xPos = 0, .yPos = 0,
+		.move = 5,
+		.str = 5, .mag = 5, .spd = 5, .def = 5
+	};
+	add_player(game, player);
+
 	getmaxyx(stdscr, game->row, game->col);
 	return game;
 }
 
 void free_game(Game *game) {
+	free(game->units);
 	free(game);
+	return;
+}
+
+void add_player(Game *game, Unit unit) {
+	if (game->playerCnt >= game->playerMax) {
+		game->playerMax *= 2;
+		game->units = realloc(game->units,
+				sizeof(Unit) * game->playerMax);
+	}
+	memcpy(game->units + game->playerCnt, &unit, sizeof(Unit));
+	game->playerCnt++;
 	return;
 }

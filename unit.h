@@ -6,6 +6,13 @@ typedef struct {
 	unsigned int xPos, yPos;
 	unsigned int move;
 	unsigned int str, mag, spd, def;
-} UnitData;
+	char **moveGrid;
+} Unit;
+
+typedef struct {
+	unsigned int *playerCnt;
+	unsigned int *playerMax;
+	Unit **units;
+} Team;
 
 #endif

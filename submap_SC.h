@@ -8,7 +8,7 @@ typedef struct {
 	unsigned int playerCnt, enemyCnt;
 	Game *game;
 	MapData *map;
-	UnitData *players, *enemies;
+	Unit **players, **enemies;
 } SubMapData;
 
 void submap_sc_init(Scene *scene, Game *game);

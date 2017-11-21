@@ -24,9 +24,21 @@ void overmap_sc_init(Scene *scene, Game *game) {
 }
 
 void overmap_update(void *args) {
+	DATASTRUCT *data = (DATASTRUCT *) args;
+	switch(data->state) {
+		case PRE_PLAYER_PHASE:
+			//find_range
+			data->state = PLAYER_MOVE;
+			break;
+		case PLAYER_MOVE:
+			break;
+		case ENEMY_PHASE:
+			break;
+	}
 	return;
 }
 void overmap_draw(void *args) {
+	//DATASTRUCT *data = (DATASTRUCT *) args;
 	return;
 }
 void overmap_keyboard(void *args, int ch) {
@@ -37,21 +49,28 @@ void overmap_keyboard(void *args, int ch) {
 void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	clear();
-	data->playerCnt = 10; // TEMPORARY VALUE
-	data->enemyCnt = 10; // TEMPORARY VALUE
+
 	data->map = malloc(sizeof(MapData));
 	map_init(data->map);
+
+	data->state = PRE_PLAYER_PHASE;
+
+	data->players = malloc(sizeof(Team));
+	data->players->units = &(data->game->units);
+	data->players->playerCnt = &(data->game->playerCnt);
+	data->players->playerMax = &(data->game->playerMax);
+	init_move_grids(data->players, data->map);
+
 	map_draw(data->map);
-	data->players = malloc(sizeof(UnitData) * data->playerCnt);
-	data->enemies = malloc(sizeof(UnitData) * data->enemyCnt);
+	draw_all_units(data->map, data->game);
 	return;
 }
 
 void overmap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	map_free(data->map);
-	free(data->map);
+	free_move_grid(data->players, data->map);
 	free(data->players);
-	free(data->enemies);
+	map_free(data->map);
+	//free(data->enemies);
 	return;
 }
