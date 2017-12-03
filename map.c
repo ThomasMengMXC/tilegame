@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
+#include <limits.h>
 #include "map.h"
 #include "game.h"
 
@@ -13,7 +14,8 @@ void map_init(MapData *map) {
 		for (int j = 0; j < map->width; j++) {
 			map->grid[i][j].tileType = '.';
 			map->grid[i][j].icon = map->grid[i][j].tileType;
-			map->grid[i][j].objects = NULL;
+			map->grid[i][j].mvCost = 1;
+			map->grid[i][j].unit = NULL;
 			map->grid[i][j].yPos = i;
 			map->grid[i][j].xPos = j;
 		}
@@ -40,35 +42,38 @@ void map_draw(MapData *map) {
 }
 
 void tile_draw(Tile tile, bool colorOn) {
-	if (colorOn) {
-		attron(COLOR_PAIR(1));
-	}
-	mvaddch(tile.yPos, tile.xPos * 2, tile.icon);
-	addch(' ');
-	if (colorOn) {
-		attroff(COLOR_PAIR(1));
+	if (tile.unit) {
+		mvprintw(tile.yPos, tile.xPos * 2, tile.unit->icon);
+	} else {
+		if (colorOn) {
+			attron(COLOR_PAIR(1));
+		}
+		mvaddch(tile.yPos, tile.xPos * 2, tile.icon);
+		addch(' ');
+		if (colorOn) {
+			attroff(COLOR_PAIR(1));
+		}
 	}
 	return;
 }
 
-void draw_all_units(MapData *map, Game *game) {
+void add_units_to_map(MapData *map, Game *game) {
 	for (int i = 0; i < game->playerCnt; i++) {
-		unit_draw_to_map(map, game->units + i);
+		map->grid[game->units[i].yPos][game->units[i].xPos].unit =
+			game->units + i;
 	}
-	return;
-}
-
-void unit_draw_to_map(MapData *map, Unit *unit) {
-	mvprintw(unit->yPos, unit->xPos * 2, ":)");
 	return;
 }
 
 void init_move_grids(Team *team, MapData *map) {
 	for (int i = 0; i < *team->playerCnt; i++) {
-		(*team->units)[i].moveGrid = calloc(map->height, sizeof(Tile *));
+		(*team->units)[i].moveGrid = malloc(map->height * sizeof(Tile *));
 		for (int j = 0; j < map->height; j++) {
 			(*team->units)[i].moveGrid[j]
-				= calloc(map->width, sizeof(Tile));
+				= malloc(map->width * sizeof(Tile));
+			for (int k = 0; k < map->width; k++) {
+				(*team->units)[i].moveGrid[j][k] = INT_MIN;
+			}
 		}
 	}
 	return;
@@ -85,23 +90,53 @@ void free_move_grid(Team *team, MapData *map) {
 }
 
 
-void find_range(Team *team) {
+void find_range(Team *team, MapData *map) {
 	for (int i = 0; i < *team->playerCnt; i++) {
 		flood_fill((*team->units)[i].xPos, (*team->units)[i].yPos, 
-				(*team->units)[i].move, *team->units + i);
+				(*team->units)[i].move, *team->units + i, map);
 	}
 	return;
 }
 
-void flood_fill(int x, int y, int move, Unit *unit) {
-	if (x >= 0 && x < 10 && y >= 0 && y < 10
-			&& unit->moveGrid[x][y] < move) {
-		unit->moveGrid[x][y] = move;
+void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
+	if (unit->moveGrid[y][x] < move) {
+		unit->moveGrid[y][x] = move;
 		if (move > 0) {
-			flood_fill(x + 1, y, move - 1, unit);
-			flood_fill(x, y + 1, move - 1, unit);
-			flood_fill(x - 1, y, move - 1, unit);
-			flood_fill(x, y - 1, move - 1, unit);
+			if (y < map->height - 1) {
+				flood_fill(y + 1, x,move - map->grid[y + 1][x].mvCost,
+						unit, map);
+			}
+			if (x < map->width - 1) {
+				flood_fill(y, x+1, move - map->grid[y][x+1].mvCost,
+						unit, map);
+			}
+			if (y > 0) {
+				flood_fill(y-1, x, move - map->grid[y-1][x].mvCost,
+						unit, map);
+			}
+			if (x > 0) {
+				flood_fill(y, x-1, move - map->grid[y][x-1].mvCost,
+						unit, map);
+			}
 		}
 	}
+}
+
+void draw_range(Unit *unit, MapData *map) {
+	for(int y = 0; y < map->height; y++) {
+		for (int x = 0; x < map->width; x++) {
+			if (unit->moveGrid[y][x] != INT_MIN){
+				if (map->grid[y][x].unit) {
+					mvprintw(y, 2 * x, map->grid[y][x].unit->icon);
+				} else {
+					attron(COLOR_PAIR(2));
+					mvaddch(y, 2 * x, map->grid[y][x].icon);
+					addch(' ');
+					attroff(COLOR_PAIR(2));
+				}
+			}
+		}
+	}
+	refresh();
+	return;
 }

@@ -2,11 +2,12 @@
 #define UNIT_H
 
 typedef struct {
+	char *icon;
 	int hp;
 	unsigned int xPos, yPos;
 	unsigned int move;
 	unsigned int str, mag, spd, def;
-	char **moveGrid;
+	int **moveGrid;
 } Unit;
 
 typedef struct {

@@ -27,7 +27,8 @@ void overmap_update(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
-			//find_range
+			find_range(data->players, data->map);
+			draw_range(*data->players->units, data->map);
 			data->state = PLAYER_MOVE;
 			break;
 		case PLAYER_MOVE:
@@ -60,9 +61,9 @@ void overmap_entry(void *args) {
 	data->players->playerCnt = &(data->game->playerCnt);
 	data->players->playerMax = &(data->game->playerMax);
 	init_move_grids(data->players, data->map);
+	add_units_to_map(data->map, data->game);
 
 	map_draw(data->map);
-	draw_all_units(data->map, data->game);
 	return;
 }
 

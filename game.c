@@ -50,8 +50,9 @@ Game *game_setup(void) {
 	game->units = calloc(game->playerMax, sizeof(Unit));
 
 	Unit player = {
+		.icon = ":)",
 		.hp = 10,
-		.xPos = 0, .yPos = 0,
+		.xPos = 10, .yPos = 10,
 		.move = 5,
 		.str = 5, .mag = 5, .spd = 5, .def = 5
 	};
