@@ -16,4 +16,15 @@ typedef struct {
 	Unit **units;
 } Team;
 
+typedef struct Node {
+	struct Node *next;
+	struct Node *previous;
+	Unit *unit;
+} Node;
+
+typedef struct {
+	unsigned char *playerCnt;
+	Unit *unit;
+} LnTeam;
+
 #endif
