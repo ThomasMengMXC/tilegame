@@ -10,12 +10,6 @@ typedef struct {
 	int **moveGrid;
 } Unit;
 
-typedef struct {
-	unsigned int *playerCnt;
-	unsigned int *playerMax;
-	Unit **units;
-} Team;
-
 typedef struct Node {
 	struct Node *next;
 	struct Node *previous;
@@ -23,8 +17,12 @@ typedef struct Node {
 } Node;
 
 typedef struct {
-	unsigned char *playerCnt;
-	Unit *unit;
-} LnTeam;
+	unsigned char playerCnt;
+	Node *firstNode;
+} Team;
+
+void add_player(Team *team, Unit unit);
+
+void free_team(Team *team);
 
 #endif

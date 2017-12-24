@@ -3,6 +3,7 @@
 #include "game.h"
 #include "map.h"
 #include "unit.h"
+#include "cursor.h"
 
 typedef enum {
 	PRE_PLAYER_PHASE,
@@ -14,6 +15,7 @@ typedef struct {
 	Game *game;
 	MapData *map;
 	Team *players, *enemies;
+	CursorData *cursor;
 	OverMapState state;
 } OverMapData;
 

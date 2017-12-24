@@ -5,6 +5,7 @@
 #include "scene.h"
 #include "unit.h"
 
+// left as an exercise for the reader
 int main(int argc, char **argv) {
 	ncurses_setup();
 
@@ -25,12 +26,14 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
+// set up some ncurses specific stuff
 int ncurses_setup(void) {
 	initscr();
 
 	start_color();
 	init_pair(1, COLOR_BLACK, COLOR_GREEN);
 	init_pair(2, COLOR_BLACK, COLOR_WHITE);
+	init_pair(3, COLOR_BLACK, COLOR_BLUE);
 
 	cbreak();
 	noecho();
@@ -40,41 +43,32 @@ int ncurses_setup(void) {
 	return 0;
 }
 
+// Creates the game object and everything inside then returns it
 Game *game_setup(void) {
 	Game *game = malloc(sizeof(Game));
 	game->sceneCnt = 3; // TEMPORARY VALUE
 	game->scene = NULL;
 
-	game->playerCnt = 0;
-	game->playerMax = 1;
-	game->units = calloc(game->playerMax, sizeof(Unit));
+	game->players = malloc(sizeof(Team));
+	game->players->playerCnt = 0;
+	game->players->firstNode = NULL;
 
 	Unit player = {
 		.icon = ":)",
 		.hp = 10,
 		.xPos = 10, .yPos = 10,
-		.move = 5,
+		.move = 1,
 		.str = 5, .mag = 5, .spd = 5, .def = 5
 	};
-	add_player(game, player);
+	add_player(game->players, player);
 
 	getmaxyx(stdscr, game->row, game->col);
 	return game;
 }
 
+// Frees the game object and everything inside that was also malloc'd
 void free_game(Game *game) {
-	free(game->units);
+	free_team(game->players);
 	free(game);
-	return;
-}
-
-void add_player(Game *game, Unit unit) {
-	if (game->playerCnt >= game->playerMax) {
-		game->playerMax *= 2;
-		game->units = realloc(game->units,
-				sizeof(Unit) * game->playerMax);
-	}
-	memcpy(game->units + game->playerCnt, &unit, sizeof(Unit));
-	game->playerCnt++;
 	return;
 }

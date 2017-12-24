@@ -28,7 +28,7 @@ void overmap_update(void *args) {
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
 			find_range(data->players, data->map);
-			draw_range(*data->players->units, data->map);
+			//draw_range(data->players->firstNode->unit, data->map);
 			data->state = PLAYER_MOVE;
 			break;
 		case PLAYER_MOVE:
@@ -39,12 +39,51 @@ void overmap_update(void *args) {
 	return;
 }
 void overmap_draw(void *args) {
-	//DATASTRUCT *data = (DATASTRUCT *) args;
+	DATASTRUCT *data = (DATASTRUCT *) args;
+	//map_draw(data->map);
 	return;
 }
 
 void overmap_keyboard(void *args, int ch) {
-	//DATASTRUCT *data = (DATASTRUCT *) args;
+	DATASTRUCT *data = (DATASTRUCT *) args;
+	switch(ch){
+		case KEY_RESIZE:
+			getmaxyx(stdscr, data->game->row, data->game->col);
+			clear();
+			break;	
+		case KEY_UP:
+			if (data->cursor->yPos > 0) {
+				data->cursor->yPos--;
+				update_cursor(data->map, data->cursor);
+			}
+			break;
+		case KEY_DOWN:
+			if (data->cursor->yPos < data->map->height - 1) {
+				data->cursor->yPos++;
+				update_cursor(data->map, data->cursor);
+			}
+			break;
+		case KEY_LEFT:
+			if (data->cursor->xPos > 0) {
+				data->cursor->xPos--;
+				update_cursor(data->map, data->cursor);
+			}
+			break;
+		case KEY_RIGHT:
+			if (data->cursor->xPos < data->map->width - 1) {
+				data->cursor->xPos++;
+				update_cursor(data->map, data->cursor);
+			}
+			break;
+		case 'z':
+			draw_range(data->players->firstNode->unit, data->map);
+			update_cursor(data->map, data->cursor);
+			break;
+		case 'x':
+			undraw_range(data->players->firstNode->unit, data->map);
+			update_cursor(data->map, data->cursor);
+			break;
+	}
 	return;
 }
 
@@ -52,27 +91,24 @@ void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	clear();
 
-	data->map = malloc(sizeof(MapData));
-	map_init(data->map);
+	data->map = map_init();
+	data->cursor = cursor_init();
 
 	data->state = PRE_PLAYER_PHASE;
 
-	data->players = malloc(sizeof(Team));
-	data->players->units = &(data->game->units);
-	data->players->playerCnt = &(data->game->playerCnt);
-	data->players->playerMax = &(data->game->playerMax);
+	data->players = data->game->players;
 	init_move_grids(data->players, data->map);
-	add_units_to_map(data->map, data->game);
+	add_units_to_map(data->map, data->players);
 
 	map_draw(data->map);
+	update_cursor(data->map, data->cursor);
 	return;
 }
 
 void overmap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	free_move_grid(data->players, data->map);
-	free(data->players);
 	map_free(data->map);
-	//free(data->enemies);
+	free(data->cursor);
 	return;
 }

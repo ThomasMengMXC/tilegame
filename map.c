@@ -4,23 +4,34 @@
 #include <limits.h>
 #include "map.h"
 #include "game.h"
+#include "cursor.h"
+//DEBUG
+FILE *fp = NULL;
 
-void map_init(MapData *map) {
+// initialises the map object and
+MapData *map_init(void) {
+	fp = fopen("debug0", "a");
+
+	MapData *map = malloc(sizeof(MapData));
+	Tile *tile = NULL;
 	map->height = 25; // TEMPORARY VALUE
 	map->width = 40; // TEMPORARY VALUE
 	map->grid = malloc(sizeof(Tile *) * map->height);
 	for (int i = 0; i < map->height; i++) {
 		map->grid[i] = malloc(sizeof(Tile) * map->width);
 		for (int j = 0; j < map->width; j++) {
-			map->grid[i][j].tileType = '.';
-			map->grid[i][j].icon = map->grid[i][j].tileType;
-			map->grid[i][j].mvCost = 1;
-			map->grid[i][j].unit = NULL;
-			map->grid[i][j].yPos = i;
-			map->grid[i][j].xPos = j;
+			tile = &(map->grid[i][j]);
+			tile->defaultIcon = '.';
+			tile->icon = tile->defaultIcon;
+			tile->defaultColour = 1;
+			tile->colour = tile->defaultColour;
+			tile->mvCost = 1;
+			tile->unit = NULL;
+			tile->yPos = i;
+			tile->xPos = j;
 		}
 	}
-	return;
+	return map;
 }
 
 void map_free(MapData *map) {
@@ -29,71 +40,87 @@ void map_free(MapData *map) {
 	}
 	free(map->grid);
 	free(map);
+
+
+
+	//DEBUG
+	fclose(fp);
 	return;
 }
 
 void map_draw(MapData *map) {
 	for (int i = 0; i < map->height; i++) {
 		for (int j = 0; j < map->width; j++) {
-			tile_draw(map->grid[i][j], true);
+			tile_draw(&(map->grid[i][j]), true, true);
 		}
 	}
 	return;
 }
 
-void tile_draw(Tile tile, bool colorOn) {
-	if (tile.unit) {
-		mvprintw(tile.yPos, tile.xPos * 2, tile.unit->icon);
+void tile_draw(Tile *tile, bool colorOn, bool defaultValue) {
+	if (colorOn) {
+		attron(COLOR_PAIR(defaultValue ?
+					tile->defaultColour : tile->colour));
+	}
+	if (tile->unit) {
+		mvprintw(tile->yPos, tile->xPos * 2, tile->unit->icon);
 	} else {
-		if (colorOn) {
-			attron(COLOR_PAIR(1));
-		}
-		mvaddch(tile.yPos, tile.xPos * 2, tile.icon);
+		mvaddch(tile->yPos, tile->xPos * 2, tile->icon);
 		addch(' ');
-		if (colorOn) {
-			attroff(COLOR_PAIR(1));
-		}
+	}
+	if (colorOn) {
+		attroff(COLOR_PAIR(defaultValue ?
+					tile->defaultColour : tile->colour));
 	}
 	return;
 }
 
-void add_units_to_map(MapData *map, Game *game) {
-	for (int i = 0; i < game->playerCnt; i++) {
-		map->grid[game->units[i].yPos][game->units[i].xPos].unit =
-			game->units + i;
+void add_units_to_map(MapData *map, Team *team) {
+	Node *current = team->firstNode;
+	while (current != NULL) {
+		map->grid[current->unit->yPos][current->unit->xPos].unit =
+			current->unit;
+		current = current->next;
 	}
 	return;
 }
 
+// Initialise the movement grids to default for all the units on a team
 void init_move_grids(Team *team, MapData *map) {
-	for (int i = 0; i < *team->playerCnt; i++) {
-		(*team->units)[i].moveGrid = malloc(map->height * sizeof(Tile *));
+	Node *current = team->firstNode;
+	while (current != NULL) {
+		current->unit->moveGrid = malloc(map->height * sizeof(Tile *));
 		for (int j = 0; j < map->height; j++) {
-			(*team->units)[i].moveGrid[j]
+			current->unit->moveGrid[j]
 				= malloc(map->width * sizeof(Tile));
 			for (int k = 0; k < map->width; k++) {
-				(*team->units)[i].moveGrid[j][k] = INT_MIN;
+				current->unit->moveGrid[j][k] = INT_MIN;
 			}
 		}
+		current = current->next;
 	}
 	return;
 }
 
 void free_move_grid(Team *team, MapData *map) {
-	for (int i = 0; i < *team->playerCnt; i++) {
+	Node *current = team->firstNode;
+	while (current != NULL) {
 		for (int j = 0; j < map->height; j++) {
-			free((*team->units)[i].moveGrid[j]);
+			free(current->unit->moveGrid[j]);
 		}
-		free((*team->units)[i].moveGrid);
+		free(current->unit->moveGrid);
+		current = current->next;
 	}
 	return;
 }
 
 
 void find_range(Team *team, MapData *map) {
-	for (int i = 0; i < *team->playerCnt; i++) {
-		flood_fill((*team->units)[i].xPos, (*team->units)[i].yPos, 
-				(*team->units)[i].move, *team->units + i, map);
+	Node *current = team->firstNode;
+	while (current != NULL) {
+		flood_fill(current->unit->yPos, current->unit->xPos, 
+				current->unit->move, current->unit, map);
+		current = current->next;
 	}
 	return;
 }
@@ -123,20 +150,70 @@ void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
 }
 
 void draw_range(Unit *unit, MapData *map) {
+	Tile *tile = NULL;
 	for(int y = 0; y < map->height; y++) {
 		for (int x = 0; x < map->width; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
-				if (map->grid[y][x].unit) {
-					mvprintw(y, 2 * x, map->grid[y][x].unit->icon);
-				} else {
-					attron(COLOR_PAIR(2));
-					mvaddch(y, 2 * x, map->grid[y][x].icon);
-					addch(' ');
-					attroff(COLOR_PAIR(2));
-				}
+				tile = &(map->grid[y][x]);
+				tile->colour = 3;
+				tile_draw(tile, true, false);
 			}
 		}
 	}
 	refresh();
+	return;
+}
+
+void undraw_range(Unit *unit, MapData *map) {
+	if (unit) {
+		Tile *tile = NULL;
+		for(int y = 0; y < map->height; y++) {
+			for (int x = 0; x < map->width; x++) {
+				if (unit->moveGrid[y][x] != INT_MIN){
+					tile = &(map->grid[y][x]);
+					tile->colour = tile->defaultColour;
+					tile_draw(tile, true, false);
+				}
+			}
+		}
+		refresh();
+	}
+	return;
+}
+
+void update_cursor(MapData *map, CursorData *cursor) {
+	fprintf(fp, "%d %d\t%d %d\n", cursor->yPos, cursor->xPos, cursor->yOld,
+			cursor->xOld);
+	fflush(fp);
+
+	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
+	Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
+	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
+		tile_draw(tileOld, true, false);
+		undraw_range(tileOld->unit, map);
+		cursor->yOld = cursor->yPos;
+		cursor->xOld = cursor->xPos;
+	}
+	if (tile->unit) {
+		draw_range(tile->unit, map);
+		attron(COLOR_PAIR(2));
+		mvprintw(tile->yPos, 2 * tile->xPos, tile->unit->icon);
+		attroff(COLOR_PAIR(2));
+	} else {
+		attron(COLOR_PAIR(2));
+		mvaddch(tile->yPos, 2 * tile->xPos, tile->icon);
+		addch(' ');
+		attroff(COLOR_PAIR(2));
+	}
+
+	return;
+}
+
+void select_unit(Tile *tile, CursorData *cursor) {
+	if (cursor->state == DEFAULT) {
+		cursor->unit = tile->unit;
+		//cursor->tile = tile;
+		cursor->state = UNIT_SELECTED;
+	}
 	return;
 }
