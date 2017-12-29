@@ -1,4 +1,4 @@
-CFLAGS = -Wall -pedantic -O3 -g
+CFLAGS = -Wall -pedantic -O3 -g -std=gnu11
 LFLAGS = -Wall -ltinfo -lncursesw
 CC = gcc
 TARGET = game
