@@ -5,11 +5,16 @@
 #include "scene.h"
 #include "game.h"
 #include "map.h"
+#include "cursor.h"
 #include "unit.h"
 
 #define DATASTRUCT OverMapData
 
+//DEBUG
+FILE *fp = NULL;
+
 void overmap_sc_init(Scene *scene, Game *game) {
+	fp = fopen("debug0", "a");
 	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 	data->game = game;
 	scene->data = data;
@@ -39,13 +44,16 @@ void overmap_update(void *args) {
 	return;
 }
 void overmap_draw(void *args) {
-	DATASTRUCT *data = (DATASTRUCT *) args;
+	//DATASTRUCT *data = (DATASTRUCT *) args;
 	//map_draw(data->map);
 	return;
 }
 
 void overmap_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
+	fprintf(fp, "%d\n", ch);
+	fflush(fp);
+
 	switch(ch){
 		case KEY_RESIZE:
 			getmaxyx(stdscr, data->game->row, data->game->col);
@@ -76,12 +84,9 @@ void overmap_keyboard(void *args, int ch) {
 			}
 			break;
 		case 'z':
-			draw_range(data->players->firstNode->unit, data->map);
-			update_cursor(data->map, data->cursor);
+			select_unit(&(data->map->grid[data->cursor->yPos][data->cursor->xPos]), data->cursor);
 			break;
 		case 'x':
-			undraw_range(data->players->firstNode->unit, data->map);
-			update_cursor(data->map, data->cursor);
 			break;
 	}
 	return;
@@ -110,5 +115,10 @@ void overmap_exit(void *args) {
 	free_move_grid(data->players, data->map);
 	map_free(data->map);
 	free(data->cursor);
+
+
+
+	//DEBUG
+	fclose(fp);
 	return;
 }

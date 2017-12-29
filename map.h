@@ -4,16 +4,8 @@
 #include <ncurses.h>
 #include "game.h"
 #include "cursor.h"
-
-typedef struct {
-	char defaultIcon;
-	char icon;
-	char defaultColour;
-	char colour;
-	int mvCost;
-	Unit *unit;
-	unsigned int yPos, xPos;
-} Tile;
+#include "unit.h"
+#include "tile.h"
 
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x
@@ -23,7 +15,6 @@ typedef struct {
 MapData *map_init(void);
 void map_free(MapData *map);
 void map_draw(MapData *map);
-void tile_draw(Tile *tile, bool colorOn, bool defaultValue);
 
 void add_units_to_map(MapData *map, Team *team);
 

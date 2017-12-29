@@ -9,3 +9,12 @@ CursorData *cursor_init(void) {
 	cursor->state = DEFAULT;
 	return cursor;
 }
+
+void select_unit(Tile *tile, CursorData *cursor) {
+	if (cursor->state == DEFAULT) {
+		cursor->unit = tile->unit;
+		cursor->tile = tile;
+		cursor->state = UNIT_SELECTED;
+	}
+	return;
+}

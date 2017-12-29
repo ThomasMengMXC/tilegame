@@ -2,16 +2,14 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <limits.h>
-#include "map.h"
 #include "game.h"
+#include "map.h"
 #include "cursor.h"
-//DEBUG
-FILE *fp = NULL;
+#include "unit.h"
+#include "tile.h"
 
 // initialises the map object and
 MapData *map_init(void) {
-	fp = fopen("debug0", "a");
-
 	MapData *map = malloc(sizeof(MapData));
 	Tile *tile = NULL;
 	map->height = 25; // TEMPORARY VALUE
@@ -21,8 +19,7 @@ MapData *map_init(void) {
 		map->grid[i] = malloc(sizeof(Tile) * map->width);
 		for (int j = 0; j < map->width; j++) {
 			tile = &(map->grid[i][j]);
-			tile->defaultIcon = '.';
-			tile->icon = tile->defaultIcon;
+			tile->icon = '.';
 			tile->defaultColour = 1;
 			tile->colour = tile->defaultColour;
 			tile->mvCost = 1;
@@ -40,11 +37,6 @@ void map_free(MapData *map) {
 	}
 	free(map->grid);
 	free(map);
-
-
-
-	//DEBUG
-	fclose(fp);
 	return;
 }
 
@@ -53,24 +45,6 @@ void map_draw(MapData *map) {
 		for (int j = 0; j < map->width; j++) {
 			tile_draw(&(map->grid[i][j]), true, true);
 		}
-	}
-	return;
-}
-
-void tile_draw(Tile *tile, bool colorOn, bool defaultValue) {
-	if (colorOn) {
-		attron(COLOR_PAIR(defaultValue ?
-					tile->defaultColour : tile->colour));
-	}
-	if (tile->unit) {
-		mvprintw(tile->yPos, tile->xPos * 2, tile->unit->icon);
-	} else {
-		mvaddch(tile->yPos, tile->xPos * 2, tile->icon);
-		addch(' ');
-	}
-	if (colorOn) {
-		attroff(COLOR_PAIR(defaultValue ?
-					tile->defaultColour : tile->colour));
 	}
 	return;
 }
@@ -182,10 +156,6 @@ void undraw_range(Unit *unit, MapData *map) {
 }
 
 void update_cursor(MapData *map, CursorData *cursor) {
-	fprintf(fp, "%d %d\t%d %d\n", cursor->yPos, cursor->xPos, cursor->yOld,
-			cursor->xOld);
-	fflush(fp);
-
 	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
 	Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
 	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
@@ -206,14 +176,5 @@ void update_cursor(MapData *map, CursorData *cursor) {
 		attroff(COLOR_PAIR(2));
 	}
 
-	return;
-}
-
-void select_unit(Tile *tile, CursorData *cursor) {
-	if (cursor->state == DEFAULT) {
-		cursor->unit = tile->unit;
-		//cursor->tile = tile;
-		cursor->state = UNIT_SELECTED;
-	}
 	return;
 }
