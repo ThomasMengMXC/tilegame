@@ -5,9 +5,8 @@
 #include "unit.h"
 
 typedef struct Tile{
-	char **icon;
+	char *icon;
 	char *colour;
-	char layers;
 	int mvCost;
 	unsigned int yPos, xPos;
 
