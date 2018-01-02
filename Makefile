@@ -36,4 +36,4 @@ cursor.o: cursor.c cursor.h tile.h
 	$(CC) $(CFLAGS) -c cursor.c
 
 clean:
-	$(RM) $(TARGET) *o *~
+	$(RM) $(TARGET) *.o *~

@@ -5,12 +5,13 @@
 #include "unit.h"
 
 typedef struct Tile{
-	char icon;
-	char defaultColour;
-	char colour;
+	char **icon;
+	char *colour;
+	char layers;
 	int mvCost;
-	Unit *unit;
 	unsigned int yPos, xPos;
+
+	Unit *unit;
 } Tile;
 
 void tile_draw(Tile *tile, bool colorOn, bool defaultValue);

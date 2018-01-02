@@ -20,8 +20,7 @@ MapData *map_init(void) {
 		for (int j = 0; j < map->width; j++) {
 			tile = &(map->grid[i][j]);
 			tile->icon = '.';
-			tile->defaultColour = 1;
-			tile->colour = tile->defaultColour;
+			tile->colour = malloc(
 			tile->mvCost = 1;
 			tile->unit = NULL;
 			tile->yPos = i;
