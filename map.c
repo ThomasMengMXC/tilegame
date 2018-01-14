@@ -144,6 +144,7 @@ void undraw_range(Unit *unit, MapData *map) {
 			for (int x = 0; x < map->width; x++) {
 				if (unit->moveGrid[y][x] != INT_MIN){
 					tile = &(map->grid[y][x]);
+					tile->colour = 1;
 					tile_draw(tile, true, false);
 				}
 			}
@@ -169,8 +170,7 @@ void update_cursor(MapData *map, CursorData *cursor) {
 		attroff(COLOR_PAIR(2));
 	} else {
 		attron(COLOR_PAIR(2));
-		mvaddch(tile->yPos, 2 * tile->xPos, tile->icon);
-		addch(' ');
+		mvprintw(tile->yPos, 2 * tile->xPos, tile->icon);
 		attroff(COLOR_PAIR(2));
 	}
 
