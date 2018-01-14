@@ -19,8 +19,8 @@ MapData *map_init(void) {
 		map->grid[i] = malloc(sizeof(Tile) * map->width);
 		for (int j = 0; j < map->width; j++) {
 			tile = &(map->grid[i][j]);
-			tile->icon = '.';
-			tile->colour = malloc(
+			tile->icon = ". ";
+			tile->colour = 1;
 			tile->mvCost = 1;
 			tile->unit = NULL;
 			tile->yPos = i;
@@ -144,7 +144,6 @@ void undraw_range(Unit *unit, MapData *map) {
 			for (int x = 0; x < map->width; x++) {
 				if (unit->moveGrid[y][x] != INT_MIN){
 					tile = &(map->grid[y][x]);
-					tile->colour = tile->defaultColour;
 					tile_draw(tile, true, false);
 				}
 			}

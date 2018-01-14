@@ -6,7 +6,7 @@
 
 typedef struct Tile{
 	char *icon;
-	char *colour;
+	char colour;
 	int mvCost;
 	unsigned int yPos, xPos;
 
