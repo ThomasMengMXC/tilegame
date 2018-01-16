@@ -12,7 +12,6 @@ typedef struct {
 } TitleData;
 
 void title_sc_init(Scene *scene, Game *game);
-void title_draw(void *args);
 void title_update(void *args);
 void title_keyboard(void *args, int ch);
 

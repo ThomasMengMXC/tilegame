@@ -22,7 +22,6 @@ void title_sc_init(Scene *scene, Game *game) {
 	scene->data = data;
 
 	scene->update = title_update;
-	scene->draw = title_draw;
 	scene->keyboard = title_keyboard;
 
 	scene->sc_entry = title_entry;
@@ -33,9 +32,7 @@ void title_sc_init(Scene *scene, Game *game) {
 void title_update(void *args) {
 	return;
 }
-void title_draw(void *args) {
-	return;
-}
+
 void title_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	int oldPos = data->pos;

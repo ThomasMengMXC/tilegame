@@ -1,14 +1,15 @@
 #ifndef SCENE_H
 #define SCENE_H
+#include <ncurses.h>
 #include "game.h"
 
 struct Game;
 
 typedef struct Scene{
 	void *data;
+	WINDOW *win;
 
 	void (*update)(void *data);
-	void (*draw)(void *data);
 	void (*keyboard)(void *data, int ch);
 
 	void (*sc_entry)(void *data);

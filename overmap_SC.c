@@ -20,7 +20,6 @@ void overmap_sc_init(Scene *scene, Game *game) {
 	scene->data = data;
 
 	scene->update = overmap_update;
-	scene->draw = overmap_draw;
 	scene->keyboard = overmap_keyboard;
 
 	scene->sc_entry = overmap_entry;
@@ -41,11 +40,6 @@ void overmap_update(void *args) {
 		case ENEMY_PHASE:
 			break;
 	}
-	return;
-}
-void overmap_draw(void *args) {
-	//DATASTRUCT *data = (DATASTRUCT *) args;
-	//map_draw(data->map);
 	return;
 }
 

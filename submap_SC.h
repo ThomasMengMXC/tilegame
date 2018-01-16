@@ -14,7 +14,6 @@ typedef struct {
 void submap_sc_init(Scene *scene, Game *game);
 
 void submap_update(void *args);
-void submap_draw(void *args);
 void submap_keyboard(void *args, int ch);
 
 void submap_entry(void *args);

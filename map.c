@@ -166,11 +166,11 @@ void update_cursor(MapData *map, CursorData *cursor) {
 	if (tile->unit) {
 		draw_range(tile->unit, map);
 		attron(COLOR_PAIR(2));
-		mvprintw(tile->yPos, 2 * tile->xPos, tile->unit->icon);
+		mvprintw(tile->yPos, tile->xPos * 2, tile->unit->icon);
 		attroff(COLOR_PAIR(2));
 	} else {
 		attron(COLOR_PAIR(2));
-		mvprintw(tile->yPos, 2 * tile->xPos, tile->icon);
+		mvprintw(tile->yPos, tile->xPos * 2, tile->icon);
 		attroff(COLOR_PAIR(2));
 	}
 

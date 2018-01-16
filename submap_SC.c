@@ -16,7 +16,6 @@ void submap_sc_init(Scene *scene, Game *game) {
 	scene->data = data;
 
 	scene->update = submap_update;
-	scene->draw = submap_draw;
 	scene->keyboard = submap_keyboard;
 
 	scene->sc_entry = submap_entry;
@@ -25,9 +24,6 @@ void submap_sc_init(Scene *scene, Game *game) {
 }
 
 void submap_update(void *args) {
-	return;
-}
-void submap_draw(void *args) {
 	return;
 }
 void submap_keyboard(void *args, int ch) {

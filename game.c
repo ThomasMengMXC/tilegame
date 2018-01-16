@@ -16,7 +16,6 @@ int main(int argc, char **argv) {
 		if (ch == KEY_RESIZE) {
 			getmaxyx(stdscr, game->row, game->col);
 		}
-		game->scene->draw(game->scene->data);
 		game->scene->update(game->scene->data);
 		game->scene->keyboard(game->scene->data, ch);
 	}
