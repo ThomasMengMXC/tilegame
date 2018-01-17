@@ -5,6 +5,7 @@
 #include "unit.h"
 
 typedef struct {
+	WINDOW *win;
 	unsigned int playerCnt, enemyCnt;
 	Game *game;
 	MapData *map;

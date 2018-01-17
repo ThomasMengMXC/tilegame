@@ -45,36 +45,33 @@ void overmap_update(void *args) {
 
 void overmap_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	fprintf(fp, "%d\n", ch);
-	fflush(fp);
-
 	switch(ch){
 		case KEY_RESIZE:
 			getmaxyx(stdscr, data->game->row, data->game->col);
-			clear();
+			//clear();
 			break;	
 		case KEY_UP:
 			if (data->cursor->yPos > 0) {
 				data->cursor->yPos--;
-				update_cursor(data->map, data->cursor);
+				update_cursor(data->win, data->map, data->cursor);
 			}
 			break;
 		case KEY_DOWN:
 			if (data->cursor->yPos < data->map->height - 1) {
 				data->cursor->yPos++;
-				update_cursor(data->map, data->cursor);
+				update_cursor(data->win, data->map, data->cursor);
 			}
 			break;
 		case KEY_LEFT:
 			if (data->cursor->xPos > 0) {
 				data->cursor->xPos--;
-				update_cursor(data->map, data->cursor);
+				update_cursor(data->win, data->map, data->cursor);
 			}
 			break;
 		case KEY_RIGHT:
 			if (data->cursor->xPos < data->map->width - 1) {
 				data->cursor->xPos++;
-				update_cursor(data->map, data->cursor);
+				update_cursor(data->win, data->map, data->cursor);
 			}
 			break;
 		case 'z':
@@ -88,7 +85,11 @@ void overmap_keyboard(void *args, int ch) {
 
 void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	clear();
+	//fprintf(fp, "%d %d\n", data->game->row, data->game->col);
+	//fflush(fp);
+
+	data->win = newwin(0, 0, 0, 0);
+	keypad(data->win, TRUE);
 
 	data->map = map_init();
 	data->cursor = cursor_init();
@@ -99,8 +100,8 @@ void overmap_entry(void *args) {
 	init_move_grids(data->players, data->map);
 	add_units_to_map(data->map, data->players);
 
-	map_draw(data->map);
-	update_cursor(data->map, data->cursor);
+	map_draw(data->win, data->map);
+	update_cursor(data->win, data->map, data->cursor);
 	return;
 }
 
@@ -109,8 +110,7 @@ void overmap_exit(void *args) {
 	free_move_grid(data->players, data->map);
 	map_free(data->map);
 	free(data->cursor);
-
-
+	delwin(data->win);
 
 	//DEBUG
 	fclose(fp);

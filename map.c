@@ -39,12 +39,13 @@ void map_free(MapData *map) {
 	return;
 }
 
-void map_draw(MapData *map) {
+void map_draw(WINDOW *win, MapData *map) {
 	for (int i = 0; i < map->height; i++) {
 		for (int j = 0; j < map->width; j++) {
-			tile_draw(&(map->grid[i][j]), true, true);
+			tile_draw(win, &(map->grid[i][j]), true, true);
 		}
 	}
+	wrefresh(win);
 	return;
 }
 
@@ -122,22 +123,22 @@ void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
 	}
 }
 
-void draw_range(Unit *unit, MapData *map) {
+void draw_range(WINDOW *win, Unit *unit, MapData *map) {
 	Tile *tile = NULL;
 	for(int y = 0; y < map->height; y++) {
 		for (int x = 0; x < map->width; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
 				tile = &(map->grid[y][x]);
 				tile->colour = 3;
-				tile_draw(tile, true, false);
+				tile_draw(win, tile, true, false);
 			}
 		}
 	}
-	refresh();
+	wrefresh(win);
 	return;
 }
 
-void undraw_range(Unit *unit, MapData *map) {
+void undraw_range(WINDOW *win, Unit *unit, MapData *map) {
 	if (unit) {
 		Tile *tile = NULL;
 		for(int y = 0; y < map->height; y++) {
@@ -145,34 +146,34 @@ void undraw_range(Unit *unit, MapData *map) {
 				if (unit->moveGrid[y][x] != INT_MIN){
 					tile = &(map->grid[y][x]);
 					tile->colour = 1;
-					tile_draw(tile, true, false);
+					tile_draw(win, tile, true, false);
 				}
 			}
 		}
-		refresh();
+		wrefresh(win);
 	}
 	return;
 }
 
-void update_cursor(MapData *map, CursorData *cursor) {
+void update_cursor(WINDOW *win, MapData *map, CursorData *cursor) {
 	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
 	Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
 	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
-		tile_draw(tileOld, true, false);
-		undraw_range(tileOld->unit, map);
+		tile_draw(win, tileOld, true, false);
+		undraw_range(win, tileOld->unit, map);
 		cursor->yOld = cursor->yPos;
 		cursor->xOld = cursor->xPos;
 	}
 	if (tile->unit) {
-		draw_range(tile->unit, map);
+		draw_range(win, tile->unit, map);
 		attron(COLOR_PAIR(2));
-		mvprintw(tile->yPos, tile->xPos * 2, tile->unit->icon);
+		mvwprintw(win, tile->yPos, tile->xPos * 2, tile->unit->icon);
 		attroff(COLOR_PAIR(2));
 	} else {
 		attron(COLOR_PAIR(2));
-		mvprintw(tile->yPos, tile->xPos * 2, tile->icon);
+		mvwprintw(win, tile->yPos, tile->xPos * 2, tile->icon);
 		attroff(COLOR_PAIR(2));
 	}
-
+	wrefresh(win);
 	return;
 }

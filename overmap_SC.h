@@ -12,6 +12,8 @@ typedef enum {
 } OverMapState;
 
 typedef struct {
+	WINDOW *win; // The windows which stuff will be draw on
+
 	Game *game; // Pointer to the original game struct
 	MapData *map; // The map
 	Team *players, *enemies; // The enemy and player teams

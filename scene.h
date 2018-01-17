@@ -7,7 +7,6 @@ struct Game;
 
 typedef struct Scene{
 	void *data;
-	WINDOW *win;
 
 	void (*update)(void *data);
 	void (*keyboard)(void *data, int ch);
