@@ -14,7 +14,7 @@ typedef struct {
 
 MapData *map_init(void);
 void map_free(MapData *map);
-void map_draw(WINDOW *win, MapData *map);
+void map_draw(MapData *map);
 
 void add_units_to_map(MapData *map, Team *team);
 
@@ -24,9 +24,9 @@ void free_move_grid(Team *team, MapData *map);
 void find_range(Team *team, MapData *map);
 void flood_fill(int x, int y, int move, Unit *unit, MapData *map);
 
-void draw_range(WINDOW *win, Unit *unit, MapData *map);
-void undraw_range(WINDOW *win, Unit *unit, MapData *map);
+void draw_range(Unit *unit, MapData *map);
+void undraw_range(Unit *unit, MapData *map);
 
-void update_cursor(WINDOW *win, MapData *map, CursorData *cursor);
+void update_cursor(MapData *map, CursorData *cursor);
 
 #endif

@@ -59,6 +59,7 @@ void title_keyboard(void *args, int ch) {
 			break;
 		case 'z':
 			if (data->pos == 0) {
+				clear();
 				scene_change(data->game, 0, 1);
 			}
 			break;

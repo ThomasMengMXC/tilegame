@@ -13,6 +13,6 @@ typedef struct Tile{
 	Unit *unit;
 } Tile;
 
-void tile_draw(WINDOW *win, Tile *tile, bool colorOn, bool defaultValue);
+void tile_draw(Tile *tile, bool colorOn, bool defaultValue);
 
 #endif
