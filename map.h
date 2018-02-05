@@ -9,7 +9,7 @@
 
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x
-	unsigned int width, height;
+	unsigned int xLength, yLength;
 } MapData;
 
 MapData *map_init(void);

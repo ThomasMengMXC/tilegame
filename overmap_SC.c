@@ -57,7 +57,7 @@ void overmap_keyboard(void *args, int ch) {
 			}
 			break;
 		case KEY_DOWN:
-			if (data->cursor->yPos < data->map->height - 1) {
+			if (data->cursor->yPos < data->map->yLength - 1) {
 				data->cursor->yPos++;
 				update_cursor(data->map, data->cursor);
 			}
@@ -69,7 +69,7 @@ void overmap_keyboard(void *args, int ch) {
 			}
 			break;
 		case KEY_RIGHT:
-			if (data->cursor->xPos < data->map->width - 1) {
+			if (data->cursor->xPos < data->map->xLength - 1) {
 				data->cursor->xPos++;
 				update_cursor(data->map, data->cursor);
 			}

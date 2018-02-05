@@ -12,12 +12,12 @@
 MapData *map_init(void) {
 	MapData *map = malloc(sizeof(MapData));
 	Tile *tile = NULL;
-	map->height = 25; // TEMPORARY VALUE
-	map->width = 40; // TEMPORARY VALUE
-	map->grid = malloc(sizeof(Tile *) * map->height);
-	for (int i = 0; i < map->height; i++) {
-		map->grid[i] = malloc(sizeof(Tile) * map->width);
-		for (int j = 0; j < map->width; j++) {
+	map->yLength = 25; // TEMPORARY VALUE
+	map->xLength = 40; // TEMPORARY VALUE
+	map->grid = malloc(sizeof(Tile *) * map->yLength);
+	for (int i = 0; i < map->yLength; i++) {
+		map->grid[i] = malloc(sizeof(Tile) * map->xLength);
+		for (int j = 0; j < map->xLength; j++) {
 			tile = &(map->grid[i][j]);
 			tile->icon = ". ";
 			tile->colour = 1;
@@ -31,7 +31,7 @@ MapData *map_init(void) {
 }
 
 void map_free(MapData *map) {
-	for (int i = 0; i < map->height; i++) {
+	for (int i = 0; i < map->yLength; i++) {
 		free(map->grid[i]);
 	}
 	free(map->grid);
@@ -40,8 +40,8 @@ void map_free(MapData *map) {
 }
 
 void map_draw(MapData *map) {
-	for (int i = 0; i < map->height; i++) {
-		for (int j = 0; j < map->width; j++) {
+	for (int i = 0; i < map->yLength; i++) {
+		for (int j = 0; j < map->xLength; j++) {
 			tile_draw(&(map->grid[i][j]), true, true);
 		}
 	}
@@ -63,11 +63,11 @@ void add_units_to_map(MapData *map, Team *team) {
 void init_move_grids(Team *team, MapData *map) {
 	Node *current = team->firstNode;
 	while (current != NULL) {
-		current->unit->moveGrid = malloc(map->height * sizeof(Tile *));
-		for (int j = 0; j < map->height; j++) {
+		current->unit->moveGrid = malloc(map->yLength * sizeof(Tile *));
+		for (int j = 0; j < map->yLength; j++) {
 			current->unit->moveGrid[j]
-				= malloc(map->width * sizeof(Tile));
-			for (int k = 0; k < map->width; k++) {
+				= malloc(map->xLength * sizeof(Tile));
+			for (int k = 0; k < map->xLength; k++) {
 				current->unit->moveGrid[j][k] = INT_MIN;
 			}
 		}
@@ -79,7 +79,7 @@ void init_move_grids(Team *team, MapData *map) {
 void free_move_grid(Team *team, MapData *map) {
 	Node *current = team->firstNode;
 	while (current != NULL) {
-		for (int j = 0; j < map->height; j++) {
+		for (int j = 0; j < map->yLength; j++) {
 			free(current->unit->moveGrid[j]);
 		}
 		free(current->unit->moveGrid);
@@ -103,11 +103,11 @@ void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
 	if (unit->moveGrid[y][x] < move) {
 		unit->moveGrid[y][x] = move;
 		if (move > 0) {
-			if (y < map->height - 1) {
+			if (y < map->yLength - 1) {
 				flood_fill(y + 1, x,move - map->grid[y + 1][x].mvCost,
 						unit, map);
 			}
-			if (x < map->width - 1) {
+			if (x < map->xLength - 1) {
 				flood_fill(y, x+1, move - map->grid[y][x+1].mvCost,
 						unit, map);
 			}
@@ -125,8 +125,8 @@ void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
 
 void draw_range(Unit *unit, MapData *map) {
 	Tile *tile = NULL;
-	for(int y = 0; y < map->height; y++) {
-		for (int x = 0; x < map->width; x++) {
+	for(int y = 0; y < map->yLength; y++) {
+		for (int x = 0; x < map->xLength; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
 				tile = &(map->grid[y][x]);
 				tile->colour = 3;
@@ -141,8 +141,8 @@ void draw_range(Unit *unit, MapData *map) {
 void undraw_range(Unit *unit, MapData *map) {
 	if (unit) {
 		Tile *tile = NULL;
-		for(int y = 0; y < map->height; y++) {
-			for (int x = 0; x < map->width; x++) {
+		for(int y = 0; y < map->yLength; y++) {
+			for (int x = 0; x < map->xLength; x++) {
 				if (unit->moveGrid[y][x] != INT_MIN){
 					tile = &(map->grid[y][x]);
 					tile->colour = 1;

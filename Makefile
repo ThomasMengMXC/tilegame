@@ -5,8 +5,8 @@ TARGET = game
 
 all: $(TARGET)
 
-$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o tile.o
-	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o tile.o
+$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o tile.o screen.o
+	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o tile.o screen.o
 
 $(TARGET).o: $(TARGET).c $(TARGET).h scene.h unit.h
 	$(CC) $(CFLAGS) -c $(TARGET).c
@@ -34,6 +34,9 @@ unit.o: unit.c unit.h
 
 cursor.o: cursor.c cursor.h tile.h
 	$(CC) $(CFLAGS) -c cursor.c
+
+screen.o: screen.c screen.h tile.h
+	$(CC) $(CFLAGS) -c screen.c
 
 clean:
 	$(RM) $(TARGET) *.o *~
