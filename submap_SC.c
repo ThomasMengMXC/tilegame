@@ -10,7 +10,7 @@
 
 #define DATASTRUCT SubMapData
 
-void submap_sc_init(Scene *scene, Game *game) {
+void init_submap_sc(Scene *scene, Game *game) {
 	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 	data->game = game;
 	scene->data = data;
@@ -36,7 +36,7 @@ void submap_entry(void *args) {
 	clear();
 	data->playerCnt = 10; // TEMPORARY VALUE
 	data->enemyCnt = 10; // TEMPORARY VALUE
-	data->map = map_init();
+	data->map = init_map();
 	map_draw(data->map);
 	data->players = malloc(sizeof(Unit) * data->playerCnt);
 	data->enemies = malloc(sizeof(Unit) * data->enemyCnt);
@@ -45,7 +45,7 @@ void submap_entry(void *args) {
 
 void submap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	map_free(data->map);
+	free_map(data->map);
 	free(data->map);
 	free(data->players);
 	free(data->enemies);

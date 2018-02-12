@@ -11,9 +11,9 @@ void scene_setup(struct Game *game) {
 	game->scene = malloc(sizeof(Scene) * game->sceneCnt);
 	origScene = game->scene;
 
-	title_sc_init(game->scene, game);
-	overmap_sc_init(game->scene + 1, game);
-	submap_sc_init(game->scene + 2, game);
+	init_title_sc(game->scene, game);
+	init_overmap_sc(game->scene + 1, game);
+	init_submap_sc(game->scene + 2, game);
 
 	game->scene->sc_entry(game->scene->data);
 	return;

@@ -19,7 +19,7 @@ typedef struct {
 	OverMapState state; // The state of the map
 } OverMapData;
 
-void overmap_sc_init(Scene *scene, Game *game);
+void init_overmap_sc(Scene *scene, Game *game);
 
 void overmap_update(void *args);
 void overmap_keyboard(void *args, int ch);

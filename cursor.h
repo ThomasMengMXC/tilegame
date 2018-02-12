@@ -16,7 +16,7 @@ typedef struct {
 	CursorState state;
 } CursorData;
 
-CursorData *cursor_init(void);
+CursorData *init_cursor(void);
 void select_unit(Tile *tile, CursorData *cursor);
 
 #endif

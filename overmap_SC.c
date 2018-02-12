@@ -13,7 +13,7 @@
 //DEBUG
 FILE *fp = NULL;
 
-void overmap_sc_init(Scene *scene, Game *game) {
+void init_overmap_sc(Scene *scene, Game *game) {
 	fp = fopen("debug0", "a");
 	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 	data->game = game;
@@ -85,8 +85,8 @@ void overmap_keyboard(void *args, int ch) {
 
 void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	data->map = map_init();
-	data->cursor = cursor_init();
+	data->map = init_map();
+	data->cursor = init_cursor();
 
 	data->state = PRE_PLAYER_PHASE;
 
@@ -102,7 +102,7 @@ void overmap_entry(void *args) {
 void overmap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	free_move_grid(data->players, data->map);
-	map_free(data->map);
+	free_map(data->map);
 	free(data->cursor);
 
 	//DEBUG

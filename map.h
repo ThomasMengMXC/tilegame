@@ -12,8 +12,8 @@ typedef struct {
 	unsigned int xLength, yLength;
 } MapData;
 
-MapData *map_init(void);
-void map_free(MapData *map);
+MapData *init_map(void);
+void free_map(MapData *map);
 void map_draw(MapData *map);
 
 void add_units_to_map(MapData *map, Team *team);

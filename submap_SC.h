@@ -12,7 +12,7 @@ typedef struct {
 	Unit **players, **enemies;
 } SubMapData;
 
-void submap_sc_init(Scene *scene, Game *game);
+void init_submap_sc(Scene *scene, Game *game);
 
 void submap_update(void *args);
 void submap_keyboard(void *args, int ch);

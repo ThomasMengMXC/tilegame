@@ -9,7 +9,7 @@
 #include "tile.h"
 
 // initialises the map object and
-MapData *map_init(void) {
+MapData *init_map(void) {
 	MapData *map = malloc(sizeof(MapData));
 	Tile *tile = NULL;
 	map->yLength = 25; // TEMPORARY VALUE
@@ -30,7 +30,7 @@ MapData *map_init(void) {
 	return map;
 }
 
-void map_free(MapData *map) {
+void free_map(MapData *map) {
 	for (int i = 0; i < map->yLength; i++) {
 		free(map->grid[i]);
 	}

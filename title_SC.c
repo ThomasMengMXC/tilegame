@@ -16,7 +16,7 @@ static char logo[][50] = {
 	{"  \\_/ |_|_|\\___|  \\____/\\__,_|_| |_| |_|\\___|"},
 };
 
-void title_sc_init(Scene *scene, Game *game) {
+void init_title_sc(Scene *scene, Game *game) {
 	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 	data->game = game;
 	scene->data = data;

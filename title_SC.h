@@ -11,7 +11,7 @@ typedef struct {
 	char shouldDraw;
 } TitleData;
 
-void title_sc_init(Scene *scene, Game *game);
+void init_title_sc(Scene *scene, Game *game);
 void title_update(void *args);
 void title_keyboard(void *args, int ch);
 
