@@ -4,6 +4,7 @@
 #include "map.h"
 #include "unit.h"
 #include "cursor.h"
+#include "screen.h"
 
 typedef enum {
 	PRE_PLAYER_PHASE,
@@ -12,6 +13,7 @@ typedef enum {
 } OverMapState;
 
 typedef struct {
+	Screen *screen;
 	Game *game; // Pointer to the original game struct
 	MapData *map; // The map
 	Team *players, *enemies; // The enemy and player teams

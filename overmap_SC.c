@@ -7,6 +7,7 @@
 #include "map.h"
 #include "cursor.h"
 #include "unit.h"
+#include "screen.h"
 
 #define DATASTRUCT OverMapData
 
@@ -32,10 +33,11 @@ void overmap_update(void *args) {
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
 			find_range(data->players, data->map);
-			//draw_range(data->players->firstNode->unit, data->map);
+			update_cursor(data->map, data->cursor);
 			data->state = PLAYER_MOVE;
 			break;
 		case PLAYER_MOVE:
+			draw_screen(data->screen);
 			break;
 		case ENEMY_PHASE:
 			break;
@@ -47,28 +49,32 @@ void overmap_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	switch(ch){
 		case KEY_RESIZE:
-			getmaxyx(stdscr, data->game->row, data->game->col);
+			getmaxyx(stdscr, data->screen->xLength, data->screen->yLength);
 			map_draw(data->map);
 			break;	
 		case KEY_UP:
+			data->map->layer->yOffset--;
 			if (data->cursor->yPos > 0) {
 				data->cursor->yPos--;
 				update_cursor(data->map, data->cursor);
 			}
 			break;
 		case KEY_DOWN:
+			data->map->layer->yOffset++;
 			if (data->cursor->yPos < data->map->yLength - 1) {
 				data->cursor->yPos++;
 				update_cursor(data->map, data->cursor);
 			}
 			break;
 		case KEY_LEFT:
+			data->map->layer->xOffset--;
 			if (data->cursor->xPos > 0) {
 				data->cursor->xPos--;
 				update_cursor(data->map, data->cursor);
 			}
 			break;
 		case KEY_RIGHT:
+			data->map->layer->xOffset++;
 			if (data->cursor->xPos < data->map->xLength - 1) {
 				data->cursor->xPos++;
 				update_cursor(data->map, data->cursor);
@@ -87,6 +93,11 @@ void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	data->map = init_map();
 	data->cursor = init_cursor();
+	data->screen = init_screen();
+	getmaxyx(stdscr, data->screen->xLength, data->screen->yLength);
+	data->screen->yLength = 10;
+	data->screen->xLength = 10;
+	data->map->layer = add_layer_to_scr(data->screen, 0, 0, 10, 10);
 
 	data->state = PRE_PLAYER_PHASE;
 
@@ -95,13 +106,16 @@ void overmap_entry(void *args) {
 	add_units_to_map(data->map, data->players);
 
 	map_draw(data->map);
-	update_cursor(data->map, data->cursor);
+	draw_screen(data->screen);
+
 	return;
 }
 
 void overmap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
 	free_move_grid(data->players, data->map);
+	remove_layer_from_scr(data->screen);
+	free_screen(data->screen);
 	free_map(data->map);
 	free(data->cursor);
 

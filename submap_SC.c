@@ -37,7 +37,6 @@ void submap_entry(void *args) {
 	data->playerCnt = 10; // TEMPORARY VALUE
 	data->enemyCnt = 10; // TEMPORARY VALUE
 	data->map = init_map();
-	map_draw(data->map);
 	data->players = malloc(sizeof(Unit) * data->playerCnt);
 	data->enemies = malloc(sizeof(Unit) * data->enemyCnt);
 	return;

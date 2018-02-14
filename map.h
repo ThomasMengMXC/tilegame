@@ -6,10 +6,12 @@
 #include "cursor.h"
 #include "unit.h"
 #include "tile.h"
+#include "layer.h"
 
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x
 	unsigned int xLength, yLength;
+	Layer *layer; // the map layer
 } MapData;
 
 MapData *init_map(void);
