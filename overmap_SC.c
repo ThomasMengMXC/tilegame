@@ -53,28 +53,24 @@ void overmap_keyboard(void *args, int ch) {
 			map_draw(data->map);
 			break;	
 		case KEY_UP:
-			data->map->layer->yOffset--;
 			if (data->cursor->yPos > 0) {
 				data->cursor->yPos--;
 				update_cursor(data->map, data->cursor);
 			}
 			break;
 		case KEY_DOWN:
-			data->map->layer->yOffset++;
 			if (data->cursor->yPos < data->map->yLength - 1) {
 				data->cursor->yPos++;
 				update_cursor(data->map, data->cursor);
 			}
 			break;
 		case KEY_LEFT:
-			data->map->layer->xOffset--;
 			if (data->cursor->xPos > 0) {
 				data->cursor->xPos--;
 				update_cursor(data->map, data->cursor);
 			}
 			break;
 		case KEY_RIGHT:
-			data->map->layer->xOffset++;
 			if (data->cursor->xPos < data->map->xLength - 1) {
 				data->cursor->xPos++;
 				update_cursor(data->map, data->cursor);
@@ -94,10 +90,8 @@ void overmap_entry(void *args) {
 	data->map = init_map();
 	data->cursor = init_cursor();
 	data->screen = init_screen();
-	getmaxyx(stdscr, data->screen->xLength, data->screen->yLength);
-	data->screen->yLength = 10;
-	data->screen->xLength = 10;
-	data->map->layer = add_layer_to_scr(data->screen, 0, 0, 10, 10);
+	getmaxyx(stdscr, data->screen->yLength, data->screen->xLength);
+	data->map->layer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
 
 	data->state = PRE_PLAYER_PHASE;
 

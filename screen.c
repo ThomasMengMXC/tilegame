@@ -7,17 +7,17 @@ int draw_screen(Screen *scr) {
 	short colourLayer, iconLayer;
 	for (short y = 0; y < scr->yLength; y++) {
 		for (short x = 0; x < scr->xLength; x++) {
-			colourLayer = iconLayer = scr->depth - 1;
+			colourLayer = iconLayer = scr->depth;
 			while (activate_colour(y, x, scr->layer, colourLayer)) {
 				--colourLayer;
 			}
-			if (colourLayer < 0) {
+			if (colourLayer < 1) {
 				mvprintw(y, 2 * x, "  ");
 			}
 			while (draw_icon(y, x, scr->layer, iconLayer)) {
 				--iconLayer;
 			}
-			if (iconLayer < 0) {
+			if (iconLayer < 1) {
 				mvprintw(y, 2 * x, "  ");
 			}
 			deactivate_colour(y, x, scr->layer, colourLayer);
@@ -44,12 +44,12 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 	Layer *layer;
 	if (scr->depth == 0) {
 		scr->depth++;
-		scr->layer = malloc(sizeof(Layer));
+		scr->layer = malloc(sizeof(Layer *));
 	} else {
 		scr->depth++;
-		scr->layer = realloc(scr->layer, sizeof(Layer) * scr->depth);
+		scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->depth);
 	}
-	layer = scr->layer + scr->depth - 1;
+	layer = scr->layer[scr->depth - 1] = malloc(sizeof(Layer));
 	layer->visibility = true;
 	layer->yOffset = yOffset;
 	layer->xOffset = xOffset;
@@ -69,7 +69,7 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 }
 
 void remove_layer_from_scr(Screen *scr) {
-	Layer *layer = scr->layer + scr->depth - 1;
+	Layer *layer = scr->layer[scr->depth - 1];
 	for (int y = 0; y < layer->yLength; y++) {
 		for (int x = 0; x < layer->xLength; x++) {
 			for (int i = 0; i < layer->sprite[y][x].iconDepth; i++) {
@@ -85,10 +85,11 @@ void remove_layer_from_scr(Screen *scr) {
 		free(layer->sprite[y]);
 	}
 	free(layer->sprite);
+	free(layer);
 	
 	if (scr->depth > 1) {
 		scr->depth--;
-		scr->layer = realloc(scr->layer, sizeof(Layer) * scr->depth);
+		scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->depth);
 	} else if (scr->depth == 1) {
 		scr->depth--;
 		free(scr->layer);

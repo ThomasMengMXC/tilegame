@@ -24,7 +24,7 @@ void init_move_grids(Team *team, MapData *map);
 void free_move_grid(Team *team, MapData *map);
 
 void find_range(Team *team, MapData *map);
-void flood_fill(int x, int y, int move, Unit *unit, MapData *map);
+void flood_fill(int y, int x, int move, Unit *unit, MapData *map);
 
 void draw_range(Unit *unit, MapData *map);
 void undraw_range(Unit *unit, MapData *map);

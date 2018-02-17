@@ -9,12 +9,14 @@
 #include "tile.h"
 #include "layer.h"
 
+extern FILE *fp;
+
 // initialises the map object and
 MapData *init_map(void) {
 	MapData *map = malloc(sizeof(MapData));
 	Tile *tile = NULL;
-	map->yLength = 10; // TEMPORARY VALUE
-	map->xLength = 10; // TEMPORARY VALUE
+	map->yLength = 25; // TEMPORARY VALUE
+	map->xLength = 40; // TEMPORARY VALUE
 	map->grid = malloc(sizeof(Tile *) * map->yLength);
 	for (int y = 0; y < map->yLength; y++) {
 		map->grid[y] = malloc(sizeof(Tile) * map->xLength);

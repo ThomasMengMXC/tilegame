@@ -5,7 +5,7 @@
 typedef struct {
 	short depth;
 	short xLength, yLength;
-	Layer *layer;
+	Layer **layer;
 } Screen;
 
 int draw_screen(Screen *scr);

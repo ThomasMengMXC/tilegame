@@ -5,20 +5,19 @@
 #include "sprite.h"
 
 // Returns 1 if nothing is drawn, 0 otherwise
-int activate_colour(short y, short x, Layer *layer, short colourLayer) {
-	short yRelative = y - layer->yOffset;
-	short xRelative = x - layer->xOffset;
-	layer += colourLayer;
-	if (colourLayer < 0) {
+int activate_colour(short y, short x, Layer **layer, short colourLayer) {
+	if (colourLayer < 1) {
 		return 0;
 	}
-	if (layer->visibility == false ||
-			yRelative < 0 || yRelative >= layer->yLength ||
-			xRelative < 0 || xRelative >= layer->xLength) {
+	Layer *lyr = layer[colourLayer - 1];
+	short yRelative = y - lyr->yOffset;
+	short xRelative = x - lyr->xOffset;
+	if (lyr->visibility == false ||
+			yRelative < 0 || yRelative >= lyr->yLength ||
+			xRelative < 0 || xRelative >= lyr->xLength) {
 		return 1;
 	}
-
-	Sprite *sprite = layer->sprite[yRelative] + xRelative;
+	Sprite *sprite = lyr->sprite[yRelative] + xRelative;
 	if (sprite->colourDepth == 0) {
 		return 1;
 	}
@@ -26,19 +25,19 @@ int activate_colour(short y, short x, Layer *layer, short colourLayer) {
 	return 0;
 }
 
-int deactivate_colour(short y, short x, Layer *layer, short colourLayer) {
-	short yRelative = y - layer->yOffset;
-	short xRelative = x - layer->xOffset;
-	layer += colourLayer;
-	if (colourLayer < 0) {
+int deactivate_colour(short y, short x, Layer **layer, short colourLayer) {
+	if (colourLayer < 1) {
 		return 0;
 	}
-	if (layer->visibility == false ||
-			yRelative < 0 || yRelative >= layer->yLength ||
-			xRelative < 0 || xRelative >= layer->xLength) {
+	Layer *lyr = layer[colourLayer - 1];
+	short yRelative = y - lyr->yOffset;
+	short xRelative = x - lyr->xOffset;
+	if (lyr->visibility == false ||
+			yRelative < 0 || yRelative >= lyr->yLength ||
+			xRelative < 0 || xRelative >= lyr->xLength) {
 		return 1;
 	}
-	Sprite *sprite = layer->sprite[yRelative] + xRelative;
+	Sprite *sprite = lyr->sprite[yRelative] + xRelative;
 	if (sprite->colourDepth == 0) {
 		return 1;
 	}
@@ -47,24 +46,23 @@ int deactivate_colour(short y, short x, Layer *layer, short colourLayer) {
 }
 
 // Returns 1 if nothing is drawn, 0 otherwise
-int draw_icon(short y, short x, Layer *layer, short iconLayer) {
-	short yRelative = y - layer->yOffset;
-	short xRelative = x - layer->xOffset;
-	layer += iconLayer;
-	if (iconLayer < 0) {
+int draw_icon(short y, short x, Layer **layer, short iconLayer) {
+	if (iconLayer < 1) {
 		return 0;
 	}
-	if (layer->visibility == false ||
-			yRelative < 0 || yRelative >= layer->yLength ||
-			xRelative < 0 || xRelative >= layer->xLength) {
+	Layer *lyr = layer[iconLayer - 1];
+	short yRelative = y - lyr->yOffset;
+	short xRelative = x - lyr->xOffset;
+	if (lyr->visibility == false ||
+			yRelative < 0 || yRelative >= lyr->yLength ||
+			xRelative < 0 || xRelative >= lyr->xLength) {
 		return 1;
 	}
-	Sprite *sprite = layer->sprite[yRelative] + xRelative;
+	Sprite *sprite = lyr->sprite[yRelative] + xRelative;
 	if (sprite->iconDepth == 0) {
 		return 1;
 	}
-	mvprintw(y, 2 * (x),
-			sprite->icon[sprite->iconDepth - 1]);
+	mvprintw(y, 2 * (x), sprite->icon[sprite->iconDepth - 1]);
 	return 0;
 }
 
