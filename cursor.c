@@ -1,5 +1,5 @@
-#include "cursor.h"
 #include <stdlib.h>
+#include "cursor.h"
 
 CursorData *init_cursor(void) {
 	CursorData *cursor = malloc(sizeof(CursorData));
@@ -13,7 +13,6 @@ CursorData *init_cursor(void) {
 void select_unit(Tile *tile, CursorData *cursor) {
 	if (cursor->state == DEFAULT) {
 		cursor->unit = tile->unit;
-		cursor->tile = tile;
 		cursor->state = UNIT_SELECTED;
 	}
 	return;

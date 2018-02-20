@@ -2,7 +2,6 @@
 #define MAP_H
 
 #include <ncurses.h>
-#include "game.h"
 #include "cursor.h"
 #include "unit.h"
 #include "tile.h"
@@ -11,7 +10,8 @@
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x
 	unsigned int xLength, yLength;
-	Layer *layer; // the map layer
+	Layer *mapLayer; // the map layer
+	Layer *rangeLayer; // the range layer
 } MapData;
 
 MapData *init_map(void);

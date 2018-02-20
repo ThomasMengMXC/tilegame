@@ -4,6 +4,7 @@
 #include "game.h"
 #include "scene.h"
 #include "unit.h"
+#include "sprite.h"
 
 // left as an exercise for the reader
 int main(int argc, char **argv) {
@@ -30,9 +31,9 @@ int ncurses_setup(void) {
 	initscr();
 
 	start_color();
-	init_pair(1, COLOR_BLACK, COLOR_GREEN);
-	init_pair(2, COLOR_BLACK, COLOR_WHITE);
-	init_pair(3, COLOR_BLACK, COLOR_BLUE);
+	init_pair(GRASS, COLOR_BLACK, COLOR_GREEN);
+	init_pair(MOVE_RANGE, COLOR_BLACK, COLOR_WHITE);
+	init_pair(CURSOR, COLOR_BLACK, COLOR_BLUE);
 
 	cbreak();
 	noecho();

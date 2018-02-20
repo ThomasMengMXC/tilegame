@@ -2,14 +2,11 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <limits.h>
-#include "game.h"
-#include "map.h"
-#include "cursor.h"
-#include "unit.h"
-#include "tile.h"
-#include "layer.h"
-
-extern FILE *fp;
+#include "map.h"	// it's own .h file
+#include "cursor.h"	// for update cursor's arguments
+#include "unit.h"	// for flood fill's arguments's arguments
+#include "tile.h"	// for creating tiles
+#include "layer.h"	// for adding colours and icons to the layer
 
 // initialises the map object and
 MapData *init_map(void) {
@@ -23,7 +20,7 @@ MapData *init_map(void) {
 		for (int x = 0; x < map->xLength; x++) {
 			tile = &(map->grid[y][x]);
 			tile->icon = ". ";
-			tile->colour = 1;
+			tile->colour = GRASS;
 			tile->mvCost = 1;
 			tile->unit = NULL;
 			tile->yPos = y;
@@ -45,10 +42,10 @@ void free_map(MapData *map) {
 void map_draw(MapData *map) {
 	for (int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
-			add_icon_to_layer(map->layer, y, x, map->grid[y][x].icon);
-			add_colour_to_layer(map->layer, y, x, map->grid[y][x].colour);
+			add_icon_to_layer(map->mapLayer, y, x, map->grid[y][x].icon);
+			add_colour_to_layer(map->mapLayer, y, x, map->grid[y][x].colour);
 			if (map->grid[y][x].unit != NULL) {
-				add_icon_to_layer(map->layer, y, x, map->grid[y][x].unit->icon);
+				add_icon_to_layer(map->mapLayer, y, x, map->grid[y][x].unit->icon);
 			}
 		}
 	}
@@ -134,7 +131,7 @@ void draw_range(Unit *unit, MapData *map) {
 	for(int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
-				add_colour_to_layer(map->layer, y, x, 3);
+				add_colour_to_layer(map->rangeLayer, y, x, CURSOR);
 			}
 		}
 	}
@@ -146,7 +143,7 @@ void undraw_range(Unit *unit, MapData *map) {
 		for(int y = 0; y < map->yLength; y++) {
 			for (int x = 0; x < map->xLength; x++) {
 				if (unit->moveGrid[y][x] != INT_MIN){
-					remove_colour_from_layer(map->layer, y, x);
+					remove_colour_from_layer(map->rangeLayer, y, x);
 				}
 			}
 		}
@@ -158,7 +155,7 @@ void update_cursor(MapData *map, CursorData *cursor) {
 	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
 	Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
 	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
-		remove_colour_from_layer(map->layer, cursor->yOld, cursor->xOld);
+		remove_colour_from_layer(map->rangeLayer, cursor->yOld, cursor->xOld);
 		undraw_range(tileOld->unit, map);
 		cursor->yOld = cursor->yPos;
 		cursor->xOld = cursor->xPos;
@@ -166,6 +163,6 @@ void update_cursor(MapData *map, CursorData *cursor) {
 	if (tile->unit) {
 		draw_range(tile->unit, map);
 	}
-	add_colour_to_layer(map->layer, tile->yPos, tile->xPos, 2);
+	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, MOVE_RANGE);
 	return;
 }

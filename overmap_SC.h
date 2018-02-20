@@ -1,10 +1,9 @@
 #ifndef OVERMAP_SC_H
 #define OVERMAP_SC_H
-#include "game.h"
-#include "map.h"
-#include "unit.h"
-#include "cursor.h"
-#include "screen.h"
+#include "game.h"	// for the game variable in the data and arguments
+#include "map.h"	// for the map in the data
+#include "cursor.h"	// for the cursor in the data
+#include "screen.h" // for the screen in the data
 
 typedef enum {
 	PRE_PLAYER_PHASE,

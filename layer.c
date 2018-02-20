@@ -22,6 +22,7 @@ int activate_colour(short y, short x, Layer **layer, short colourLayer) {
 		return 1;
 	}
 	attron(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
+	lyr->draw = false;
 	return 0;
 }
 
@@ -63,10 +64,11 @@ int draw_icon(short y, short x, Layer **layer, short iconLayer) {
 		return 1;
 	}
 	mvprintw(y, 2 * (x), sprite->icon[sprite->iconDepth - 1]);
+	lyr->draw = false;
 	return 0;
 }
 
-void add_colour_to_layer(Layer *layer, short y, short x, short colour) {
+void add_colour_to_layer(Layer *layer, short y, short x, Colour colour) {
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
@@ -74,12 +76,13 @@ void add_colour_to_layer(Layer *layer, short y, short x, short colour) {
 	Sprite *sprite = &(layer->sprite[y][x]);
 	if (sprite->colourDepth == 0) {
 		sprite->colourDepth++;
-		sprite->colour = malloc(sizeof(short));
+		sprite->colour = malloc(sizeof(Colour));
 	} else {
 		sprite->colourDepth++;
-		sprite->colour = realloc(sprite->colour, sizeof(short) * sprite->colourDepth);
+		sprite->colour = realloc(sprite->colour, sizeof(Colour) * sprite->colourDepth);
 	}
 	sprite->colour[sprite->colourDepth - 1] = colour;
+	layer->draw = true;
 	return;
 }
 
@@ -97,6 +100,7 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 		free(sprite->colour);
 		sprite->colour = NULL;
 	}
+	layer->draw = true;
 	return;
 }
 
@@ -115,6 +119,7 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 	}
 	sprite->icon[sprite->iconDepth - 1] = malloc(sizeof(char) * 3);
 	strncpy(sprite->icon[sprite->iconDepth - 1], icon, 3);
+	layer->draw = true;
 	return;
 }
 
@@ -125,12 +130,48 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	free(sprite->icon[sprite->iconDepth - 1]);
+	sprite->icon[sprite->iconDepth - 1] = NULL;
 	if (sprite->iconDepth > 1) {
 		sprite->iconDepth--;
 		sprite->icon = realloc(sprite->icon, sizeof(char *) * sprite->iconDepth);
 	} else if (sprite->iconDepth == 1) {
 		sprite->iconDepth--;
 		free(sprite->icon);
+		sprite->icon = NULL;
+	}
+	layer->draw = true;
+	return;
+}
+
+void add_button_to_layer(Layer *layer, short y, short x, Button button) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	Sprite *sprite = &(layer->sprite[y][x]);
+	if (sprite->buttonDepth == 0) {
+		sprite->buttonDepth++;
+		sprite->button = malloc(sizeof(Button));
+	} else {
+		sprite->buttonDepth++;
+		sprite->button = realloc(sprite->button, sizeof(Button) * sprite->buttonDepth);
+	}
+	sprite->button[sprite->buttonDepth - 1] = button;
+	return;
+}
+
+void remove_button_from_layer(Layer *layer, short y, short x) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	Sprite *sprite = &(layer->sprite[y][x]);
+	if (sprite->buttonDepth > 1) {
+		sprite->buttonDepth--;
+		sprite->button = realloc(sprite->button, sizeof(Button) * sprite->buttonDepth);
+	} else if (sprite->buttonDepth == 1) {
+		sprite->buttonDepth--;
+		free(sprite->button);
 		sprite->icon = NULL;
 	}
 	return;

@@ -12,7 +12,6 @@ typedef struct {
 	unsigned char xPos, yPos;
 	unsigned char xOld, yOld;
 	Unit *unit;
-	Tile *tile;
 	CursorState state;
 } CursorData;
 

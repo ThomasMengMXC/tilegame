@@ -1,13 +1,12 @@
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "overmap_SC.h"
-#include "scene.h"
-#include "game.h"
-#include "map.h"
-#include "cursor.h"
-#include "unit.h"
-#include "screen.h"
+#include "overmap_SC.h" // own .h file
+#include "scene.h"		// for setting the scene variables
+#include "game.h"		// for setting the game variable in the data
+#include "map.h"		// for creating the map in the data
+#include "cursor.h"		// for creating the cursor in the data
+#include "screen.h"		// for the screen functions and creating the object
 
 #define DATASTRUCT OverMapData
 
@@ -47,37 +46,40 @@ void overmap_update(void *args) {
 
 void overmap_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
+	CursorData *cursor = data->cursor;
 	switch(ch){
 		case KEY_RESIZE:
 			getmaxyx(stdscr, data->screen->xLength, data->screen->yLength);
 			map_draw(data->map);
 			break;	
 		case KEY_UP:
-			if (data->cursor->yPos > 0) {
-				data->cursor->yPos--;
-				update_cursor(data->map, data->cursor);
+			if (cursor->yPos > 0) {
+				cursor->yPos--;
+				update_cursor(data->map, cursor);
 			}
 			break;
 		case KEY_DOWN:
-			if (data->cursor->yPos < data->map->yLength - 1) {
-				data->cursor->yPos++;
-				update_cursor(data->map, data->cursor);
+			if (cursor->yPos < data->map->yLength - 1) {
+				cursor->yPos++;
+				update_cursor(data->map, cursor);
 			}
 			break;
 		case KEY_LEFT:
-			if (data->cursor->xPos > 0) {
-				data->cursor->xPos--;
-				update_cursor(data->map, data->cursor);
+			if (cursor->xPos > 0) {
+				cursor->xPos--;
+				update_cursor(data->map, cursor);
 			}
 			break;
 		case KEY_RIGHT:
-			if (data->cursor->xPos < data->map->xLength - 1) {
-				data->cursor->xPos++;
-				update_cursor(data->map, data->cursor);
+			if (cursor->xPos < data->map->xLength - 1) {
+				cursor->xPos++;
+				update_cursor(data->map, cursor);
 			}
 			break;
 		case 'z':
-			select_unit(&(data->map->grid[data->cursor->yPos][data->cursor->xPos]), data->cursor);
+			if (data->map->rangeLayer->sprite[cursor->yPos][cursor->xPos].button) {
+				activate_button(cursor->yPos, cursor->xPos, data->screen, args);
+			}
 			break;
 		case 'x':
 			break;
@@ -85,20 +87,42 @@ void overmap_keyboard(void *args, int ch) {
 	return;
 }
 
+int dummy(void *args) { // TESTING
+	DATASTRUCT *data = (DATASTRUCT *) args;
+	static int toggle = 0;
+	if (!toggle) {
+		add_icon_to_layer(data->map->rangeLayer, 1, 1, "GN");
+		add_icon_to_layer(data->map->rangeLayer, 1, 2, "U!");
+	} else {
+		remove_icon_from_layer(data->map->rangeLayer, 1, 1);
+		remove_icon_from_layer(data->map->rangeLayer, 1, 2);
+	}
+	toggle = !toggle;
+	return 0;
+}
+
+
 void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
+
+	// initialising primary data
 	data->map = init_map();
 	data->cursor = init_cursor();
 	data->screen = init_screen();
 	getmaxyx(stdscr, data->screen->yLength, data->screen->xLength);
-	data->map->layer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
+	// initialising secondary data
+	data->map->mapLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
+	data->map->rangeLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
+	add_button_to_layer(data->map->rangeLayer, 1, 1, dummy); // TESTING
 
 	data->state = PRE_PLAYER_PHASE;
 
+	// intialising a player
 	data->players = data->game->players;
 	init_move_grids(data->players, data->map);
 	add_units_to_map(data->map, data->players);
 
+	// draw the map
 	map_draw(data->map);
 	draw_screen(data->screen);
 
@@ -107,10 +131,16 @@ void overmap_entry(void *args) {
 
 void overmap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	free_move_grid(data->players, data->map);
+	// remove the two layers from the screen and teh screen itself
+	remove_layer_from_scr(data->screen);
 	remove_layer_from_scr(data->screen);
 	free_screen(data->screen);
+
+	// free the map's move grid and map
+	free_move_grid(data->players, data->map);
 	free_map(data->map);
+
+	// free the cursor
 	free(data->cursor);
 
 	//DEBUG

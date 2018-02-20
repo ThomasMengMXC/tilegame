@@ -3,10 +3,11 @@
 
 #include <ncurses.h>
 #include "unit.h"
+#include "sprite.h"
 
 typedef struct Tile{
 	char *icon;
-	char colour;
+	Colour colour;
 	int mvCost;
 	unsigned int yPos, xPos;
 

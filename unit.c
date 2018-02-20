@@ -1,6 +1,6 @@
-#include "unit.h"
 #include <string.h>
 #include <stdlib.h>
+#include "unit.h"
 
 // Adds a player to the end of the team list
 void add_player(Team *team, Unit unit) {
