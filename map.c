@@ -7,10 +7,11 @@
 #include "unit.h"	// for flood fill's arguments's arguments
 #include "tile.h"	// for creating tiles
 #include "layer.h"	// for adding colours and icons to the layer
+#include "button.h" // for the unit buttons
 
 // initialises the map object and
-MapData *init_map(void) {
-	MapData *map = malloc(sizeof(MapData));
+Map *init_map(void) {
+	Map *map = malloc(sizeof(Map));
 	Tile *tile = NULL;
 	map->yLength = 25; // TEMPORARY VALUE
 	map->xLength = 40; // TEMPORARY VALUE
@@ -30,7 +31,7 @@ MapData *init_map(void) {
 	return map;
 }
 
-void free_map(MapData *map) {
+void free_map(Map *map) {
 	for (int y = 0; y < map->yLength; y++) {
 		free(map->grid[y]);
 	}
@@ -39,20 +40,22 @@ void free_map(MapData *map) {
 	return;
 }
 
-void map_draw(MapData *map) {
+void map_draw(Map *map) {
 	for (int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
-			add_icon_to_layer(map->mapLayer, y, x, map->grid[y][x].icon);
-			add_colour_to_layer(map->mapLayer, y, x, map->grid[y][x].colour);
-			if (map->grid[y][x].unit != NULL) {
-				add_icon_to_layer(map->mapLayer, y, x, map->grid[y][x].unit->icon);
+			Tile *tile = &(map->grid[y][x]);
+			add_icon_to_layer(map->mapLayer, y, x, tile->icon);
+			add_colour_to_layer(map->mapLayer, y, x, tile->colour);
+			if (map->grid[y][x].unit) {
+				add_icon_to_layer(map->mapLayer, y, x, tile->unit->icon);
+				add_button_to_layer(map->mapLayer, y, x, unit_button);
 			}
 		}
 	}
 	return;
 }
 
-void add_units_to_map(MapData *map, Team *team) {
+void add_units_to_map(Map *map, Team *team) {
 	Node *current = team->firstNode;
 	while (current != NULL) {
 		unsigned int yPos = current->unit->yPos;
@@ -64,7 +67,7 @@ void add_units_to_map(MapData *map, Team *team) {
 }
 
 // Initialise the movement grids to default for all the units on a team
-void init_move_grids(Team *team, MapData *map) {
+void init_move_grids(Team *team, Map *map) {
 	Node *current = team->firstNode;
 	while (current != NULL) {
 		current->unit->moveGrid = malloc(map->yLength * sizeof(Tile *));
@@ -80,7 +83,7 @@ void init_move_grids(Team *team, MapData *map) {
 	return;
 }
 
-void free_move_grid(Team *team, MapData *map) {
+void free_move_grid(Team *team, Map *map) {
 	Node *current = team->firstNode;
 	while (current != NULL) {
 		for (int j = 0; j < map->yLength; j++) {
@@ -93,7 +96,7 @@ void free_move_grid(Team *team, MapData *map) {
 }
 
 
-void find_range(Team *team, MapData *map) {
+void find_range(Team *team, Map *map) {
 	Node *current = team->firstNode;
 	while (current != NULL) {
 		flood_fill(current->unit->yPos, current->unit->xPos, 
@@ -103,7 +106,7 @@ void find_range(Team *team, MapData *map) {
 	return;
 }
 
-void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
+void flood_fill(int y, int x, int move, Unit *unit, Map *map) {
 	if (unit->moveGrid[y][x] < move) {
 		unit->moveGrid[y][x] = move;
 		if (move > 0) {
@@ -127,7 +130,7 @@ void flood_fill(int y, int x, int move, Unit *unit, MapData *map) {
 	}
 }
 
-void draw_range(Unit *unit, MapData *map) {
+void draw_range(Unit *unit, Map *map) {
 	for(int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
@@ -138,7 +141,7 @@ void draw_range(Unit *unit, MapData *map) {
 	return;
 }
 
-void undraw_range(Unit *unit, MapData *map) {
+void undraw_range(Unit *unit, Map *map) {
 	if (unit) {
 		for(int y = 0; y < map->yLength; y++) {
 			for (int x = 0; x < map->xLength; x++) {
@@ -151,11 +154,17 @@ void undraw_range(Unit *unit, MapData *map) {
 	return;
 }
 
-void update_cursor(MapData *map, CursorData *cursor) {
+void update_cursor(Map *map, Cursor *cursor) {
 	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
 	Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
+	if (cursor->icon) {
+		add_icon_to_layer(map->rangeLayer, tile->yPos, tile->xPos, cursor->icon);
+	}
 	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
 		remove_colour_from_layer(map->rangeLayer, cursor->yOld, cursor->xOld);
+		if (cursor->icon) {
+			remove_icon_from_layer(map->rangeLayer, cursor->yOld, cursor->xOld);
+		}
 		undraw_range(tileOld->unit, map);
 		cursor->yOld = cursor->yPos;
 		cursor->xOld = cursor->xPos;

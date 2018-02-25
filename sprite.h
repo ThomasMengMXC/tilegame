@@ -10,7 +10,7 @@ typedef enum {
 typedef int (*Button)(void *);
 
 typedef struct {
-	short colourDepth, iconDepth, buttonDepth;
+	char colourDepth, iconDepth, buttonDepth;
 	Colour *colour;
 	char **icon;
 	Button *button;

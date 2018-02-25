@@ -9,13 +9,14 @@ typedef enum {
 } CursorState;
 
 typedef struct {
-	unsigned char xPos, yPos;
-	unsigned char xOld, yOld;
+	bool canClick;
+	unsigned char yPos, xPos;
+	unsigned char yOld, xOld;
 	Unit *unit;
+	char *icon;
 	CursorState state;
-} CursorData;
+} Cursor;
 
-CursorData *init_cursor(void);
-void select_unit(Tile *tile, CursorData *cursor);
+Cursor *init_cursor(void);
 
 #endif

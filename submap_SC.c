@@ -8,7 +8,7 @@
 #include "map.h"
 #include "unit.h"
 
-#define DATASTRUCT SubMapData
+#define DATASTRUCT SubMap
 
 void init_submap_sc(Scene *scene, Game *game) {
 	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));

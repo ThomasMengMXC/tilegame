@@ -9,26 +9,26 @@
 
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x
-	unsigned int xLength, yLength;
+	unsigned int yLength, xLength;
 	Layer *mapLayer; // the map layer
 	Layer *rangeLayer; // the range layer
-} MapData;
+} Map;
 
-MapData *init_map(void);
-void free_map(MapData *map);
-void map_draw(MapData *map);
+Map *init_map(void);
+void free_map(Map *map);
+void map_draw(Map *map);
 
-void add_units_to_map(MapData *map, Team *team);
+void add_units_to_map(Map *map, Team *team);
 
-void init_move_grids(Team *team, MapData *map);
-void free_move_grid(Team *team, MapData *map);
+void init_move_grids(Team *team, Map *map);
+void free_move_grid(Team *team, Map *map);
 
-void find_range(Team *team, MapData *map);
-void flood_fill(int y, int x, int move, Unit *unit, MapData *map);
+void find_range(Team *team, Map *map);
+void flood_fill(int y, int x, int move, Unit *unit, Map *map);
 
-void draw_range(Unit *unit, MapData *map);
-void undraw_range(Unit *unit, MapData *map);
+void draw_range(Unit *unit, Map *map);
+void undraw_range(Unit *unit, Map *map);
 
-void update_cursor(MapData *map, CursorData *cursor);
+void update_cursor(Map *map, Cursor *cursor);
 
 #endif

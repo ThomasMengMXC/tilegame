@@ -9,8 +9,8 @@ play: all
 	valgrind --leak-check=full ./game 2> meme
 
 
-$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o
-	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o
+$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o
+	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o
 
 $(TARGET).o: $(TARGET).c $(TARGET).h scene.h unit.h sprite.h
 	$(CC) $(CFLAGS) -c $(TARGET).c
@@ -27,7 +27,7 @@ submap_SC.o: submap_SC.c submap_SC.h game.h map.h scene.h unit.h
 overmap_SC.o: overmap_SC.c overmap_SC.h game.h map.h scene.h cursor.h screen.h
 	$(CC) $(CFLAGS) -c overmap_SC.c
 
-map.o: map.c map.h cursor.h tile.h layer.h unit.h sprite.h
+map.o: map.c map.h cursor.h tile.h layer.h unit.h sprite.h button.h
 	$(CC) $(CFLAGS) -c map.c
 
 unit.o: unit.c unit.h
@@ -42,5 +42,8 @@ screen.o: screen.c screen.h sprite.h
 layer.o: layer.c layer.h sprite.h
 	$(CC) $(CFLAGS) -c layer.c
 
+button.o: button.c button.h overmap_SC.h cursor.h
+	$(CC) $(CFLAGS) -c button.c
+
 clean:
-	$(RM) $(TARGET) *.o *~
+	$(RM) $(TARGET) *.o *~ meme debug0

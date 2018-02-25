@@ -13,24 +13,36 @@ int draw_screen(Screen *scr) {
 	for (short y = 0; y < scr->yLength; y++) {
 		for (short x = 0; x < scr->xLength/2; x++) {
 			colourLayer = iconLayer = scr->depth;
-			while (activate_colour(y, x, scr->layer, colourLayer)) {
+			while (activate_colour(scr->layer, y, x, colourLayer)) {
 				--colourLayer;
 			}
 			if (colourLayer < 1) {
 				mvprintw(y, 2 * x, "  ");
 			}
-			while (draw_icon(y, x, scr->layer, iconLayer)) {
+			while (draw_icon(scr->layer, y, x, iconLayer)) {
 				--iconLayer;
 			}
 			if (iconLayer < 1) {
 				mvprintw(y, 2 * x, "  ");
 			}
-			deactivate_colour(y, x, scr->layer, colourLayer);
+			deactivate_colour(scr->layer, y, x, colourLayer);
 		}
 	}
 	refresh();
 	return 0;
 }
+
+// Are any layers worth drawing?
+bool should_draw(Layer **layer, short depth) {
+	while (depth > 0 && layer[depth - 1]->draw == false) {
+		depth--;
+	}
+	if (depth < 1) {
+		return false;
+	}
+	return true;
+}
+
 // Returns 1 if nothing is activated, 0 otherwise
 int activate_button(short y, short x, Screen *scr, void *args) {
 	short buttonLayer = scr->depth;
@@ -39,6 +51,7 @@ int activate_button(short y, short x, Screen *scr, void *args) {
 			break;
 		}
 		Layer *lyr = scr->layer[buttonLayer - 1];
+		buttonLayer--;
 		short yRelative = y - lyr->yOffset;
 		short xRelative = x - lyr->xOffset;
 		if (lyr->visibility == false ||
@@ -54,18 +67,6 @@ int activate_button(short y, short x, Screen *scr, void *args) {
 		break;
 	}
 	return 0;
-}
-
-
-// Are any layers worth drawing?
-bool should_draw(Layer **layer, short depth) {
-	while (depth > 0 && layer[depth - 1]->draw == false) {
-		depth--;
-	}
-	if (depth < 1) {
-		return false;
-	}
-	return true;
 }
 
 Screen *init_screen(void) {
@@ -95,39 +96,15 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 	layer->visibility = true; // setting variables
 	layer->yOffset = yOffset; layer->xOffset = xOffset;
 	layer->yLength = yLength; layer->xLength = xLength;
-	layer->sprite = malloc(sizeof(Sprite *) * yLength); // the sprite
-	for (int y = 0; y < yLength; y++) {
-		layer->sprite[y] = malloc(sizeof(Sprite) * xLength);
-		for (int x = 0; x < xLength; x++) {
-			Sprite *sprite = &(layer->sprite[y][x]);
-			sprite->colour = NULL;		sprite->icon = NULL;	sprite->button = NULL;
-			sprite->colourDepth = 0;	sprite->iconDepth = 0;	sprite->buttonDepth = 0;
-		}
-	}
+	layer->sprite = init_sprite(yLength, xLength);
 	return layer;
 }
 
 void remove_layer_from_scr(Screen *scr) {
 	Layer *layer = scr->layer[scr->depth - 1];
-	for (int y = 0; y < layer->yLength; y++) {
-		for (int x = 0; x < layer->xLength; x++) {
-			for (int i = 0; i < layer->sprite[y][x].iconDepth; i++) {
-				free(layer->sprite[y][x].icon[i]);
-			}
-			if (layer->sprite[y][x].icon != NULL) {
-				free(layer->sprite[y][x].icon);
-			}
-			if (layer->sprite[y][x].colour != NULL) {
-				free(layer->sprite[y][x].colour);
-			}
-			if (layer->sprite[y][x].button != NULL) {
-				free(layer->sprite[y][x].button);
-			}
-		}
-		free(layer->sprite[y]);
-	}
-	free(layer->sprite);
+	free_sprite(layer->yLength, layer->xLength, layer->sprite);
 	free(layer);
+	layer = NULL;
 	
 	if (scr->depth > 1) {
 		scr->depth--;
@@ -135,6 +112,42 @@ void remove_layer_from_scr(Screen *scr) {
 	} else if (scr->depth == 1) {
 		scr->depth--;
 		free(scr->layer);
+		scr->layer = NULL;
 	}
+	return;
+}
+
+Sprite **init_sprite(short yLength, short xLength) {
+	Sprite **spriteArray = malloc(sizeof(Sprite *) * yLength); // the sprite
+	for (int y = 0; y < yLength; y++) {
+		spriteArray[y] = malloc(sizeof(Sprite) * xLength);
+		for (int x = 0; x < xLength; x++) {
+			Sprite *sprite = &(spriteArray[y][x]);
+			sprite->colour = NULL;		sprite->icon = NULL;	sprite->button = NULL;
+			sprite->colourDepth = 0;	sprite->iconDepth = 0;	sprite->buttonDepth = 0;
+		}
+	}
+	return spriteArray;
+}
+
+void free_sprite(short yLength, short xLength, Sprite **sprite) {
+	for (int y = 0; y < yLength; y++) {
+		for (int x = 0; x < xLength; x++) {
+			for (int i = 0; i < sprite[y][x].iconDepth; i++) {
+				free(sprite[y][x].icon[i]);
+			}
+			if (sprite[y][x].icon != NULL) {
+				free(sprite[y][x].icon);
+			}
+			if (sprite[y][x].colour != NULL) {
+				free(sprite[y][x].colour);
+			}
+			if (sprite[y][x].button != NULL) {
+				free(sprite[y][x].button);
+			}
+		}
+		free(sprite[y]);
+	}
+	free(sprite);
 	return;
 }

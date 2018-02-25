@@ -5,7 +5,7 @@
 #include "sprite.h"
 
 // Returns 1 if nothing is drawn, 0 otherwise
-int activate_colour(short y, short x, Layer **layer, short colourLayer) {
+int activate_colour(Layer **layer, short y, short x, char colourLayer) {
 	if (colourLayer < 1) {
 		return 0;
 	}
@@ -26,7 +26,7 @@ int activate_colour(short y, short x, Layer **layer, short colourLayer) {
 	return 0;
 }
 
-int deactivate_colour(short y, short x, Layer **layer, short colourLayer) {
+int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
 	if (colourLayer < 1) {
 		return 0;
 	}
@@ -47,7 +47,7 @@ int deactivate_colour(short y, short x, Layer **layer, short colourLayer) {
 }
 
 // Returns 1 if nothing is drawn, 0 otherwise
-int draw_icon(short y, short x, Layer **layer, short iconLayer) {
+int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 	if (iconLayer < 1) {
 		return 0;
 	}
@@ -92,6 +92,9 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
+	if (sprite->colourDepth < 1) {
+		return;
+	}
 	if (sprite->colourDepth > 1) {
 		sprite->colourDepth--;
 		sprite->colour = realloc(sprite->colour, sizeof(short) * sprite->colourDepth);
@@ -129,6 +132,9 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
+	if (sprite->iconDepth < 1) {
+		return;
+	}
 	free(sprite->icon[sprite->iconDepth - 1]);
 	sprite->icon[sprite->iconDepth - 1] = NULL;
 	if (sprite->iconDepth > 1) {
@@ -166,6 +172,9 @@ void remove_button_from_layer(Layer *layer, short y, short x) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
+	if (sprite->buttonDepth < 1) {
+		return;
+	}
 	if (sprite->buttonDepth > 1) {
 		sprite->buttonDepth--;
 		sprite->button = realloc(sprite->button, sizeof(Button) * sprite->buttonDepth);
@@ -176,3 +185,21 @@ void remove_button_from_layer(Layer *layer, short y, short x) {
 	}
 	return;
 }
+
+void layer_swap(Layer **layer1, Layer **layer2) {
+	void *swap;
+	swap = *layer1;
+	*layer1 = *layer2;
+	*layer2 = swap;
+	return;
+}
+
+void layer_memory_swap(Layer *layer1, Layer *layer2) {
+	Layer *swapLayer = malloc(sizeof(Layer));
+	memcpy((void *) swapLayer, (void *) layer1, sizeof(Layer));
+	memcpy((void *) layer1, (void *) layer2, sizeof(Layer));
+	memcpy((void *) layer2, (void *) swapLayer, sizeof(Layer));
+	free(swapLayer);
+	return;
+}
+

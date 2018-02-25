@@ -8,7 +8,7 @@
 #include "cursor.h"		// for creating the cursor in the data
 #include "screen.h"		// for the screen functions and creating the object
 
-#define DATASTRUCT OverMapData
+#define DATASTRUCT OverMap
 
 //DEBUG
 FILE *fp = NULL;
@@ -46,7 +46,7 @@ void overmap_update(void *args) {
 
 void overmap_keyboard(void *args, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	CursorData *cursor = data->cursor;
+	Cursor *cursor = data->cursor;
 	switch(ch){
 		case KEY_RESIZE:
 			getmaxyx(stdscr, data->screen->xLength, data->screen->yLength);
@@ -77,7 +77,7 @@ void overmap_keyboard(void *args, int ch) {
 			}
 			break;
 		case 'z':
-			if (data->map->rangeLayer->sprite[cursor->yPos][cursor->xPos].button) {
+			if (cursor->canClick) {
 				activate_button(cursor->yPos, cursor->xPos, data->screen, args);
 			}
 			break;
@@ -86,21 +86,6 @@ void overmap_keyboard(void *args, int ch) {
 	}
 	return;
 }
-
-int dummy(void *args) { // TESTING
-	DATASTRUCT *data = (DATASTRUCT *) args;
-	static int toggle = 0;
-	if (!toggle) {
-		add_icon_to_layer(data->map->rangeLayer, 1, 1, "GN");
-		add_icon_to_layer(data->map->rangeLayer, 1, 2, "U!");
-	} else {
-		remove_icon_from_layer(data->map->rangeLayer, 1, 1);
-		remove_icon_from_layer(data->map->rangeLayer, 1, 2);
-	}
-	toggle = !toggle;
-	return 0;
-}
-
 
 void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
@@ -113,7 +98,6 @@ void overmap_entry(void *args) {
 	// initialising secondary data
 	data->map->mapLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
 	data->map->rangeLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
-	add_button_to_layer(data->map->rangeLayer, 1, 1, dummy); // TESTING
 
 	data->state = PRE_PLAYER_PHASE;
 
@@ -125,13 +109,12 @@ void overmap_entry(void *args) {
 	// draw the map
 	map_draw(data->map);
 	draw_screen(data->screen);
-
 	return;
 }
 
 void overmap_exit(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
-	// remove the two layers from the screen and teh screen itself
+	// remove the two layers from the screen and the screen itself
 	remove_layer_from_scr(data->screen);
 	remove_layer_from_scr(data->screen);
 	free_screen(data->screen);

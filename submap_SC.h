@@ -8,9 +8,9 @@ typedef struct {
 	WINDOW *win;
 	unsigned int playerCnt, enemyCnt;
 	Game *game;
-	MapData *map;
+	Map *map;
 	Unit **players, **enemies;
-} SubMapData;
+} SubMap;
 
 void init_submap_sc(Scene *scene, Game *game);
 

@@ -11,9 +11,9 @@ typedef struct {
 	Sprite **sprite;
 } Layer;
 
-int activate_colour(short y, short x, Layer **layer, short colourLayer);
-int deactivate_colour(short y, short x, Layer **layer, short colourLayer);
-int draw_icon(short y, short x, Layer **layer, short iconLayer);
+int activate_colour(Layer **layer, short y, short x, char colourLayer);
+int deactivate_colour(Layer **layer, short y, short x, char colourLayer);
+int draw_icon(Layer **layer, short y, short x, char iconLayer);
 
 void add_colour_to_layer(Layer *layer, short y, short x, Colour colour);
 void remove_colour_from_layer(Layer *layer, short y, short x);
@@ -23,5 +23,7 @@ void remove_icon_from_layer(Layer *layer, short y, short x);
 
 void add_button_to_layer(Layer *layer, short y, short x, Button button);
 void remove_button_from_layer(Layer *layer, short y, short x);
+void layer_swap(Layer **layer1, Layer **layer2);
+void layer_memory_swap(Layer *layer1, Layer *layer2);
 
 #endif

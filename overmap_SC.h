@@ -14,11 +14,11 @@ typedef enum {
 typedef struct {
 	Screen *screen;
 	Game *game; // Pointer to the original game struct
-	MapData *map; // The map
+	Map *map; // The map
 	Team *players, *enemies; // The enemy and player teams
-	CursorData *cursor; // The cursor
+	Cursor *cursor; // The cursor
 	OverMapState state; // The state of the map
-} OverMapData;
+} OverMap;
 
 void init_overmap_sc(Scene *scene, Game *game);
 
