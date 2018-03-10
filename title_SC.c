@@ -24,8 +24,8 @@ void init_title_sc(Scene *scene, Game *game) {
 	scene->update = title_update;
 	scene->keyboard = title_keyboard;
 
-	scene->sc_entry = title_entry;
-	scene->sc_exit = title_exit;
+	scene->entry = title_entry;
+	scene->exit = title_exit;
 	return;
 }
 
@@ -60,7 +60,7 @@ void title_keyboard(void *args, int ch) {
 		case 'z':
 			if (data->pos == 0) {
 				clear();
-				scene_change(data->game, 0, 1);
+				scene_change(data->game->stage, 1);
 			}
 			break;
 	}

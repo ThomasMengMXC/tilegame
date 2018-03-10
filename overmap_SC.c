@@ -13,19 +13,20 @@
 //DEBUG
 FILE *fp = NULL;
 
+/*
 void init_overmap_sc(Scene *scene, Game *game) {
 	fp = fopen("debug0", "a");
-	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 	data->game = game;
 	scene->data = data;
 
 	scene->update = overmap_update;
 	scene->keyboard = overmap_keyboard;
 
-	scene->sc_entry = overmap_entry;
-	scene->sc_exit = overmap_exit;
+	scene->entry = overmap_entry;
+	scene->exit = overmap_exit;
 	return;
 }
+*/
 
 void overmap_update(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
@@ -89,6 +90,7 @@ void overmap_keyboard(void *args, int ch) {
 
 void overmap_entry(void *args) {
 	DATASTRUCT *data = (DATASTRUCT *) args;
+	data = malloc(sizeof(DATASTRUCT));
 
 	// initialising primary data
 	data->map = init_map();

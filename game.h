@@ -1,12 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 #include <stdio.h>
-#include "scene.h"
+#include "stage.h"
 #include "unit.h"
 
 typedef struct Game{
-	struct Scene *scene;
-	unsigned int sceneCnt;
+	Stage *stage;
 
 	Team *players;
 
@@ -18,9 +17,9 @@ typedef struct Game{
 	int row, col;
 } Game;
 
-int ncurses_setup(void);
+int ncurses_init(void);
 
-Game *game_setup(void);
+Game *game_init(void);
 
 void free_game(Game *game);
 

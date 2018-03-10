@@ -18,8 +18,8 @@ void init_submap_sc(Scene *scene, Game *game) {
 	scene->update = submap_update;
 	scene->keyboard = submap_keyboard;
 
-	scene->sc_entry = submap_entry;
-	scene->sc_exit = submap_exit;
+	scene->entry = submap_entry;
+	scene->exit = submap_exit;
 	return;
 }
 

@@ -1,5 +1,5 @@
 CFLAGS = -Wall -pedantic -g -std=gnu11 -O3
-LFLAGS = -Wall -ltinfo -lncursesw
+LFLAGS = -Wall -ltinfo -lncursesw -lSDL2_mixer -lSDL2
 CC = gcc
 TARGET = game
 
@@ -9,11 +9,14 @@ play: all
 	valgrind --leak-check=full ./game 2> meme
 
 
-$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o
-	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o
+$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o
+	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o `sdl-config --libs`
 
 $(TARGET).o: $(TARGET).c $(TARGET).h scene.h unit.h sprite.h
 	$(CC) $(CFLAGS) -c $(TARGET).c
+
+stage.o: stage.c stage.h
+	$(CC) $(CFLAGS) -c stage.c
 
 scene.o: scene.c scene.h title_SC.h overmap_SC.h submap_SC.h
 	$(CC) $(CFLAGS) -c scene.c

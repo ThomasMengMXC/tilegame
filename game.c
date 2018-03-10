@@ -1,33 +1,63 @@
 #include <ncurses.h>
 #include <stdlib.h>
-#include <string.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "game.h"
+#include "stage.h"
 #include "scene.h"
 #include "unit.h"
 #include "sprite.h"
+#include "overmap_SC.h"
 
-// left as an exercise for the reader
+void sounds(void) {
+	if (SDL_Init(SDL_INIT_AUDIO) == -1) {
+		fprintf(stderr, "init SDL error: %s\n", SDL_GetError());
+		SDL_Quit();
+		exit(1);
+	}
+
+	if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024) < 0)
+	{
+		printf("Error initializing SDL_mixer: %s\n", Mix_GetError());
+		exit(1);
+	}
+	Mix_Chunk *sound = Mix_LoadWAV("Spank.mp3");
+	Mix_PlayChannel(-1, sound, 0);
+	return;
+}
+
+// left as an exercise for the reader :^)
 int main(int argc, char **argv) {
-	ncurses_setup();
+	sounds();
+	Game *game;
+	Scene *scene; // the scene currently being worked on
 
-	Game *game = game_setup();
-	scene_setup(game);
+	ncurses_init();
+
+	game = game_init();
+	game->stage = stage_init();
+	add_scene_to_stage(game->stage, overmap_update, overmap_keyboard,
+			overmap_entry, overmap_exit);
+
 	int ch = 0;
 	while((ch = getch()) != 'q') {
-		if (ch == KEY_RESIZE) {
-			getmaxyx(stdscr, game->row, game->col);
+		scene = game->stage->currentScene; // set the current scene
+		if (scene) {
+			if (ch == KEY_RESIZE) {
+				getmaxyx(stdscr, game->row, game->col);
+			}
+			scene->update(scene->data);
+			scene->keyboard(scene->data, ch);
 		}
-		game->scene->update(game->scene->data);
-		game->scene->keyboard(game->scene->data, ch);
 	}
-	scene_exit(game);
+	stage_exit(game->stage);
 	free_game(game);
 	endwin();
 	return 0;
 }
 
 // set up some ncurses specific stuff
-int ncurses_setup(void) {
+int ncurses_init(void) {
 	initscr();
 
 	start_color();
@@ -44,10 +74,9 @@ int ncurses_setup(void) {
 }
 
 // Creates the game object and everything inside then returns it
-Game *game_setup(void) {
+Game *game_init(void) {
 	Game *game = malloc(sizeof(Game));
-	game->sceneCnt = 3; // TEMPORARY VALUE
-	game->scene = NULL;
+	game->stage = NULL;
 
 	game->players = malloc(sizeof(Team));
 	game->players->playerCnt = 0;
