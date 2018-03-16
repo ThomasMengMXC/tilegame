@@ -8,8 +8,8 @@
 typedef struct Tile{
 	char *icon;
 	Colour colour;
-	int mvCost;
-	unsigned int yPos, xPos;
+	signed short mvCost;
+	unsigned short yPos, xPos;
 
 	Unit *unit;
 } Tile;

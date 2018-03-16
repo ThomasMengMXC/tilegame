@@ -82,7 +82,7 @@ void add_colour_to_layer(Layer *layer, short y, short x, Colour colour) {
 		sprite->colour = realloc(sprite->colour, sizeof(Colour) * sprite->colourDepth);
 	}
 	sprite->colour[sprite->colourDepth - 1] = colour;
-	layer->draw = true;
+	layer->draw = 0x01; // TRUE
 	return;
 }
 
@@ -103,7 +103,7 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 		free(sprite->colour);
 		sprite->colour = NULL;
 	}
-	layer->draw = true;
+	layer->draw = 1; // TRUE;
 	return;
 }
 
@@ -122,7 +122,7 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 	}
 	sprite->icon[sprite->iconDepth - 1] = malloc(sizeof(char) * 3);
 	strncpy(sprite->icon[sprite->iconDepth - 1], icon, 3);
-	layer->draw = true;
+	layer->draw = 1; // TRUE
 	return;
 }
 
@@ -145,7 +145,7 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 		free(sprite->icon);
 		sprite->icon = NULL;
 	}
-	layer->draw = true;
+	layer->draw = 1; // TRUE
 	return;
 }
 

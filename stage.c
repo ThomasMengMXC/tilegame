@@ -34,23 +34,16 @@ void stage_exit(Stage *stage) {
 	return;
 }
 
-// creates a new scene on the stageeen and returns a pointer to said new layer
+// creates a new scene on the stage and returns a pointer to said new layer
 void add_scene_to_stage(Stage *stage, UpdateFn upd, KeyboardFn kb,
 		EntryFn entry, ExitFn exit) {
-	Scene *scene;
-	if (stage->depth == 0) {
-		stage->depth++;
-		stage->scene = malloc(sizeof(Scene *));
-	} else {
-		stage->depth++;
-		stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->depth);
-	}
-	scene = stage->scene[stage->depth - 1] = malloc(sizeof(Scene));
+	stage->depth++;
+	stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->depth);
+
+	stage->scene[stage->depth - 1] = init_scene(upd, kb, entry, exit);
 	if (stage->currentScene == NULL) {
-		stage->currentScene = scene;
+		stage->currentScene = stage->scene[stage->depth - 1];
 	}
-	scene->update = upd; scene->keyboard = kb; //update & kb hooks during run
-	scene->entry = entry; scene->exit = exit; //entry/exit hooks
 	return;
 }
 

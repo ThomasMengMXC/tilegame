@@ -69,10 +69,11 @@ int activate_button(short y, short x, Screen *scr, void *args) {
 	return 0;
 }
 
-Screen *init_screen(void) {
+Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0;
-	scr->xLength = scr->yLength = 0;
+	scr->yLength = yLength;
+	scr->xLength = xLength;
 	return scr;
 }
 

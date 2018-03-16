@@ -95,7 +95,9 @@ void overmap_entry(void *args) {
 	// initialising primary data
 	data->map = init_map();
 	data->cursor = init_cursor();
-	data->screen = init_screen();
+	short yLength, xLength;
+	getmaxyx(stdscr, xLength, yLength);
+	data->screen = init_screen(yLength, xLength);
 	getmaxyx(stdscr, data->screen->yLength, data->screen->xLength);
 	// initialising secondary data
 	data->map->mapLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);

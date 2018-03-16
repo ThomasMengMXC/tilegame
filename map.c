@@ -106,7 +106,7 @@ void find_range(Team *team, Map *map) {
 	return;
 }
 
-void flood_fill(int y, int x, int move, Unit *unit, Map *map) {
+void flood_fill(short y, short x, int move, Unit *unit, Map *map) {
 	if (unit->moveGrid[y][x] < move) {
 		unit->moveGrid[y][x] = move;
 		if (move > 0) {

@@ -4,10 +4,10 @@
 #include "sprite.h"
 
 typedef struct {
-	bool draw; // has this layer been updated
-	bool visibility;
-	short xOffset, yOffset;
-	short xLength, yLength;
+	char draw; // has this layer been updated
+	char visibility;
+	short yOffset, xOffset;
+	short yLength, xLength;
 	Sprite **sprite;
 } Layer;
 

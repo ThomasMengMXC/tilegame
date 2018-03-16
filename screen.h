@@ -4,7 +4,7 @@
 
 typedef struct {
 	short depth;
-	short xLength, yLength;
+	short yLength, xLength;
 	Layer **layer;
 } Screen;
 
@@ -13,7 +13,7 @@ bool should_draw(Layer **layer, short depth);
 
 int activate_button(short y, short x, Screen *scr, void *args);
 
-Screen *init_screen(void);
+Screen *init_screen(short yLength, short xLength);
 void free_screen(Screen *scr);
 
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,

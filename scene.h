@@ -18,6 +18,8 @@ typedef struct Scene{
 	ExitFn exit;
 } Scene;
 
+Scene *init_scene(UpdateFn upd, KeyboardFn kb, EntryFn entry, ExitFn exit);
+
 /*
 void scene_init(struct Game *game);
 

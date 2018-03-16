@@ -1,5 +1,5 @@
 CFLAGS = -Wall -pedantic -g -std=gnu11 -O3
-LFLAGS = -Wall -ltinfo -lncursesw -lSDL2_mixer -lSDL2
+LFLAGS = -Wall -ltinfo -lncursesw # -lSDL2_mixer -lSDL2 \
 CC = gcc
 TARGET = game
 
@@ -10,7 +10,7 @@ play: all
 
 
 $(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o
-	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o `sdl-config --libs`
+	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o # `sdl2-config --libs` \
 
 $(TARGET).o: $(TARGET).c $(TARGET).h scene.h unit.h sprite.h
 	$(CC) $(CFLAGS) -c $(TARGET).c
