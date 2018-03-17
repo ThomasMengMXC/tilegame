@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <limits.h>
+#include <theatre/layer.h>
+
 #include "map.h"	// it's own .h file
 #include "cursor.h"	// for update cursor's arguments
 #include "unit.h"	// for flood fill's arguments's arguments
 #include "tile.h"	// for creating tiles
-#include "layer.h"	// for adding colours and icons to the layer
 #include "button.h" // for the unit buttons
 
 // initialises the map object and

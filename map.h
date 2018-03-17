@@ -5,7 +5,7 @@
 #include "cursor.h"
 #include "unit.h"
 #include "tile.h"
-#include "layer.h"
+#include <theatre/layer.h>
 
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x

@@ -1,43 +1,34 @@
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <theatre/scene.h>
+#include <theatre/screen.h>
 #include "overmap_SC.h" // own .h file
-#include "scene.h"		// for setting the scene variables
 #include "game.h"		// for setting the game variable in the data
 #include "map.h"		// for creating the map in the data
 #include "cursor.h"		// for creating the cursor in the data
-#include "screen.h"		// for the screen functions and creating the object
 
-#define DATASTRUCT OverMap
+DATASTRUCT *init_overmap(void) {
+	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
 
-//DEBUG
-FILE *fp = NULL;
+	data->state = PRE_PLAYER_PHASE;
 
-/*
-void init_overmap_sc(Scene *scene, Game *game) {
-	fp = fopen("debug0", "a");
-	data->game = game;
-	scene->data = data;
-
-	scene->update = overmap_update;
-	scene->keyboard = overmap_keyboard;
-
-	scene->entry = overmap_entry;
-	scene->exit = overmap_exit;
-	return;
+	// initialising primary data
+	data->map = init_map();
+	data->cursor = init_cursor();
+	return data;
 }
-*/
 
-void overmap_update(void *args) {
-	DATASTRUCT *data = (DATASTRUCT *) args;
+void overmap_update(Props *props) {
+	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
-			find_range(data->players, data->map);
+			//find_range(data->players, data->map);
 			update_cursor(data->map, data->cursor);
 			data->state = PLAYER_MOVE;
 			break;
 		case PLAYER_MOVE:
-			draw_screen(data->screen);
+			draw_screen(props->screen);
 			break;
 		case ENEMY_PHASE:
 			break;
@@ -45,12 +36,12 @@ void overmap_update(void *args) {
 	return;
 }
 
-void overmap_keyboard(void *args, int ch) {
-	DATASTRUCT *data = (DATASTRUCT *) args;
+void overmap_keyboard(Props *props, int ch) {
+	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	Cursor *cursor = data->cursor;
 	switch(ch){
 		case KEY_RESIZE:
-			getmaxyx(stdscr, data->screen->xLength, data->screen->yLength);
+			getmaxyx(stdscr, props->screen->xLength, props->screen->yLength);
 			map_draw(data->map);
 			break;	
 		case KEY_UP:
@@ -79,58 +70,52 @@ void overmap_keyboard(void *args, int ch) {
 			break;
 		case 'z':
 			if (cursor->canClick) {
-				activate_button(cursor->yPos, cursor->xPos, data->screen, args);
+				activate_button(cursor->yPos, cursor->xPos, props);
 			}
 			break;
 		case 'x':
+			request_sc_change(props, 1);
 			break;
 	}
 	return;
 }
 
-void overmap_entry(void *args) {
-	DATASTRUCT *data = (DATASTRUCT *) args;
-	data = malloc(sizeof(DATASTRUCT));
-
-	// initialising primary data
-	data->map = init_map();
-	data->cursor = init_cursor();
+void overmap_entry(Props *props) {
 	short yLength, xLength;
-	getmaxyx(stdscr, xLength, yLength);
-	data->screen = init_screen(yLength, xLength);
-	getmaxyx(stdscr, data->screen->yLength, data->screen->xLength);
-	// initialising secondary data
-	data->map->mapLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
-	data->map->rangeLayer = add_layer_to_scr(data->screen, 0, 0, 25, 40);
+	getmaxyx(stdscr, yLength, xLength);
+	props->screen = init_screen(yLength, xLength);
 
-	data->state = PRE_PLAYER_PHASE;
+	props->data = init_overmap();
+	DATASTRUCT *data = (DATASTRUCT *) props->data;
+
+	// initialising secondary data
+	data->map->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
+	data->map->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 
 	// intialising a player
-	data->players = data->game->players;
-	init_move_grids(data->players, data->map);
-	add_units_to_map(data->map, data->players);
+	//data->players = data->game->players;
+	//init_move_grids(data->players, data->map);
+	//add_units_to_map(data->map, data->players);
 
 	// draw the map
 	map_draw(data->map);
-	draw_screen(data->screen);
+	draw_screen(props->screen);
 	return;
 }
 
-void overmap_exit(void *args) {
-	DATASTRUCT *data = (DATASTRUCT *) args;
+void overmap_exit(Props *props) {
+	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	// remove the two layers from the screen and the screen itself
-	remove_layer_from_scr(data->screen);
-	remove_layer_from_scr(data->screen);
-	free_screen(data->screen);
+	remove_layer_from_scr(props->screen);
+	remove_layer_from_scr(props->screen);
+	free_screen(props->screen);
 
 	// free the map's move grid and map
-	free_move_grid(data->players, data->map);
+	//free_move_grid(data->players, data->map);
 	free_map(data->map);
 
 	// free the cursor
 	free(data->cursor);
-
-	//DEBUG
-	fclose(fp);
+	free(data);
 	return;
 }

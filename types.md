@@ -79,3 +79,15 @@
 +	sprite
 	-	A double pointer which contains an array of the sprites on the screen
 	-	Is a double pointer since the screen is 2d
+
+### Initialisation:
++	malloc the layer
++	set draw and visibility to true
++	set \[y,x\] \[Offset,Length\] according to their respective arguments
++	init the sprites map using the initialser
+
+### Freeing
++	free the sprites using the free'er
++	free the layer
+
+

@@ -1,36 +1,32 @@
 CFLAGS = -Wall -pedantic -g -std=gnu11 -O3
-LFLAGS = -Wall -ltinfo -lncursesw # -lSDL2_mixer -lSDL2 \
+LFLAGS = -Wall -ltheatre -ltinfo -lncursesw
 CC = gcc
 TARGET = game
 
-all: $(TARGET)
+all: 
+	make -C lib
+	make game
 
 play: all
 	valgrind --leak-check=full ./game 2> meme
 
 
-$(TARGET): $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o
-	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o scene.o title_SC.o submap_SC.o overmap_SC.o map.o unit.o cursor.o screen.o layer.o button.o stage.o # `sdl2-config --libs` \
+$(TARGET): $(TARGET).o overmap_SC.o map.o unit.o cursor.o button.o
+	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o overmap_SC.o map.o unit.o cursor.o button.o
 
-$(TARGET).o: $(TARGET).c $(TARGET).h scene.h unit.h sprite.h
+$(TARGET).o: $(TARGET).c $(TARGET).h unit.h
 	$(CC) $(CFLAGS) -c $(TARGET).c
-
-stage.o: stage.c stage.h
-	$(CC) $(CFLAGS) -c stage.c
-
-scene.o: scene.c scene.h title_SC.h overmap_SC.h submap_SC.h
-	$(CC) $(CFLAGS) -c scene.c
 
 title_SC.o: title_SC.c title_SC.h game.h scene.h
 	$(CC) $(CFLAGS) -c title_SC.c
 
-submap_SC.o: submap_SC.c submap_SC.h game.h map.h scene.h unit.h
+submap_SC.o: submap_SC.c submap_SC.h game.h map.h unit.h
 	$(CC) $(CFLAGS) -c submap_SC.c
 
-overmap_SC.o: overmap_SC.c overmap_SC.h game.h map.h scene.h cursor.h screen.h
+overmap_SC.o: overmap_SC.c overmap_SC.h game.h map.h cursor.h
 	$(CC) $(CFLAGS) -c overmap_SC.c
 
-map.o: map.c map.h cursor.h tile.h layer.h unit.h sprite.h button.h
+map.o: map.c map.h cursor.h tile.h unit.h button.h
 	$(CC) $(CFLAGS) -c map.c
 
 unit.o: unit.c unit.h
@@ -39,14 +35,9 @@ unit.o: unit.c unit.h
 cursor.o: cursor.c cursor.h tile.h
 	$(CC) $(CFLAGS) -c cursor.c
 
-screen.o: screen.c screen.h sprite.h
-	$(CC) $(CFLAGS) -c screen.c
-
-layer.o: layer.c layer.h sprite.h
-	$(CC) $(CFLAGS) -c layer.c
-
 button.o: button.c button.h overmap_SC.h cursor.h
 	$(CC) $(CFLAGS) -c button.c
 
 clean:
-	$(RM) $(TARGET) *.o *~ meme debug0
+	make -C lib clean
+	rm $(TARGET) *.o

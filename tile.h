@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 #include "unit.h"
-#include "sprite.h"
+#include <theatre/sprite.h>
 
 typedef struct Tile{
 	char *icon;
