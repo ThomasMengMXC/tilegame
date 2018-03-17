@@ -2,7 +2,12 @@ CFLAGS = -Wall -pedantic -g -std=gnu11 -O3
 LFLAGS = -Wall -ltheatre -ltinfo -lncursesw # -lSDL2_mixer -lSDL2 \
 CC = gcc
 
-libtheatre.so: stage.o scene.o screen.o layer.o sprite.o
+all: libtheatre.so /usr/local/include/theatre
+
+/usr/local/include/theatre:
+	sudo mkdir /usr/local/include/theatre
+
+libtheatre.so: stage.o scene.o screen.o layer.o sprite.o /usr/local/include/theatre
 	$(CC) -shared -o libtheatre.so *.o -lm
 	sudo cp libtheatre.so /usr/local/lib
 	sudo cp *.h /usr/local/include/theatre
@@ -22,7 +27,7 @@ layer.o: layer.c layer.h sprite.h
 sprite.o: sprite.c sprite.h
 	$(CC) $(CFLAGS) -fPIC -c sprite.c
 
-clean:
+clean: /usr/local/include/theatre
 	rm *.o
 	rm libtheatre.so
 	sudo rm /usr/local/lib/libtheatre.so

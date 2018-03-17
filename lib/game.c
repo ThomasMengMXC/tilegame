@@ -9,7 +9,7 @@
 
 static void segfault(int signo) {
 	endwin();
-	printf("segfaulted: %d\n", signo);
+	printf("segfaulted LOL: %d\n", signo);
 	exit(1);
 }
 
