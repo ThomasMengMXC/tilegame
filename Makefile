@@ -3,9 +3,7 @@ LFLAGS = -Wall -ltheatre -ltinfo -lncursesw
 CC = gcc
 TARGET = game
 
-all: 
-	make -C lib
-	make game
+all: $(TARGET)
 
 play: all
 	valgrind --leak-check=full ./game 2> meme
@@ -39,5 +37,4 @@ button.o: button.c button.h overmap_SC.h cursor.h
 	$(CC) $(CFLAGS) -c button.c
 
 clean:
-	make -C lib clean
 	rm $(TARGET) *.o
