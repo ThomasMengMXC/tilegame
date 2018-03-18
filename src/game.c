@@ -54,7 +54,7 @@ int init_ncurses(void) {
 	initscr();
 
 	start_color();
-	for (int i = 0; i < 256; i++) {
+	for (int i = 0; i < 232; i++) {
 		init_pair(i, COLOR_BLACK, i);
 	}
 	cbreak();

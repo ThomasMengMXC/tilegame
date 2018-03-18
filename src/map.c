@@ -46,7 +46,8 @@ void map_draw(Map *map) {
 		for (int x = 0; x < map->xLength; x++) {
 			Tile *tile = &(map->grid[y][x]);
 			add_icon_to_layer(map->mapLayer, y, x, tile->icon);
-			add_colour_to_layer(map->mapLayer, y, x, tile->r, tile->g, tile->b);
+			add_colour_to_layer(map->mapLayer, y, x, 8,
+					tile->r, tile->g, tile->b);
 			if (map->grid[y][x].unit) {
 				add_icon_to_layer(map->mapLayer, y, x, tile->unit->icon);
 				add_button_to_layer(map->mapLayer, y, x, unit_button);
@@ -135,7 +136,7 @@ void draw_range(Unit *unit, Map *map) {
 	for(int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
-				add_colour_to_layer(map->rangeLayer, y, x, 0, 215, 255);
+				add_colour_to_layer(map->rangeLayer, y, x, 8, 0, 215, 255);
 			}
 		}
 	}
@@ -175,7 +176,7 @@ void update_cursor(Map *map, Cursor *cursor) {
 	if (tile->unit) {
 		draw_range(tile->unit, map);
 	}
-	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos,
+	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, 8,
 			255, 255, 255);
 	return;
 }
