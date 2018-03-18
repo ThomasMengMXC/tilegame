@@ -14,8 +14,8 @@
 Map *init_map(void) {
 	Map *map = malloc(sizeof(Map));
 	Tile *tile = NULL;
-	map->yLength = 25; // TEMPORARY VALUE
-	map->xLength = 40; // TEMPORARY VALUE
+	map->yLength = 100; // TEMPORARY VALUE
+	map->xLength = 100; // TEMPORARY VALUE
 	map->grid = malloc(sizeof(Tile *) * map->yLength);
 	for (int y = 0; y < map->yLength; y++) {
 		map->grid[y] = malloc(sizeof(Tile) * map->xLength);
@@ -159,12 +159,14 @@ void update_cursor(Map *map, Cursor *cursor) {
 	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
 	Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
 	if (cursor->icon) {
-		add_icon_to_layer(map->rangeLayer, tile->yPos, tile->xPos, cursor->icon);
+		add_icon_to_layer(map->rangeLayer, tile->yPos, tile->xPos,
+				cursor->icon);
 	}
 	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
 		remove_colour_from_layer(map->rangeLayer, cursor->yOld, cursor->xOld);
 		if (cursor->icon) {
-			remove_icon_from_layer(map->rangeLayer, cursor->yOld, cursor->xOld);
+			remove_icon_from_layer(map->rangeLayer, cursor->yOld,
+					cursor->xOld);
 		}
 		undraw_range(tileOld->unit, map);
 		cursor->yOld = cursor->yPos;
@@ -173,6 +175,7 @@ void update_cursor(Map *map, Cursor *cursor) {
 	if (tile->unit) {
 		draw_range(tile->unit, map);
 	}
-	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, 255, 255, 255);
+	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos,
+			255, 255, 255);
 	return;
 }
