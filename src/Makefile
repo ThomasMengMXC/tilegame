@@ -6,7 +6,7 @@ TARGET = game
 all: $(TARGET)
 
 play: all
-	valgrind --leak-check=full ./game 2> meme
+	valgrind --leak-check=full ../game 2> meme
 
 
 $(TARGET): $(TARGET).o overmap_SC.o map.o unit.o cursor.o button.o

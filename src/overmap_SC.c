@@ -89,8 +89,8 @@ void overmap_entry(Props *props) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 
 	// initialising secondary data
-	data->map->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
-	data->map->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
+	data->map->mapLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
+	data->map->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
 
 	// intialising a player
 	//data->players = data->game->players;

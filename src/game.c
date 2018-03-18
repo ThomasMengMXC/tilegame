@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <theatre/stage.h>
 #include <theatre/scene.h>
+#include <theatre/colour.h>
 
 #include "game.h"
 #include "overmap_SC.h"
@@ -19,6 +20,7 @@ void testing(void) {
 // left as an exercise for the reader :^)
 int main(int argc, char **argv) {
 	signal(SIGSEGV, segfault);
+	fprintf(stderr, "%d\n", rgb_to_term(128, 128, 128));
 
 	Stage *stage;
 	Scene *scene;
@@ -53,10 +55,9 @@ int init_ncurses(void) {
 	initscr();
 
 	start_color();
-	init_pair(GRASS, COLOR_BLACK, COLOR_GREEN);
-	init_pair(MOVE_RANGE, COLOR_BLACK, COLOR_WHITE);
-	init_pair(CURSOR, COLOR_BLACK, COLOR_BLUE);
-
+	for (int i = 0; i < 256; i++) {
+		init_pair(i, COLOR_BLACK, i);
+	}
 	cbreak();
 	noecho();
 	curs_set(0);

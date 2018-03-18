@@ -2,12 +2,13 @@
 #define TILE_H
 
 #include <ncurses.h>
-#include "unit.h"
 #include <theatre/sprite.h>
+#include <stdint.h>
+#include "unit.h"
 
 typedef struct Tile{
 	char *icon;
-	Colour colour;
+	uint8_t r, g, b;
 	signed short mvCost;
 	unsigned short yPos, xPos;
 

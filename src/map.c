@@ -21,12 +21,12 @@ Map *init_map(void) {
 		map->grid[y] = malloc(sizeof(Tile) * map->xLength);
 		for (int x = 0; x < map->xLength; x++) {
 			tile = &(map->grid[y][x]);
+
 			tile->icon = ". ";
-			tile->colour = GRASS;
+			tile->r = 0; tile->g = 135; tile->b = 0;
 			tile->mvCost = 1;
 			tile->unit = NULL;
-			tile->yPos = y;
-			tile->xPos = x;
+			tile->yPos = y; tile->xPos = x;
 		}
 	}
 	return map;
@@ -46,7 +46,7 @@ void map_draw(Map *map) {
 		for (int x = 0; x < map->xLength; x++) {
 			Tile *tile = &(map->grid[y][x]);
 			add_icon_to_layer(map->mapLayer, y, x, tile->icon);
-			add_colour_to_layer(map->mapLayer, y, x, tile->colour);
+			add_colour_to_layer(map->mapLayer, y, x, tile->r, tile->g, tile->b);
 			if (map->grid[y][x].unit) {
 				add_icon_to_layer(map->mapLayer, y, x, tile->unit->icon);
 				add_button_to_layer(map->mapLayer, y, x, unit_button);
@@ -135,7 +135,7 @@ void draw_range(Unit *unit, Map *map) {
 	for(int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
-				add_colour_to_layer(map->rangeLayer, y, x, CURSOR);
+				add_colour_to_layer(map->rangeLayer, y, x, 0, 215, 255);
 			}
 		}
 	}
@@ -173,6 +173,6 @@ void update_cursor(Map *map, Cursor *cursor) {
 	if (tile->unit) {
 		draw_range(tile->unit, map);
 	}
-	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, MOVE_RANGE);
+	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, 255, 255, 255);
 	return;
 }
