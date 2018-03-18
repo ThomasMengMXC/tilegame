@@ -11,6 +11,7 @@ play: all
 
 $(TARGET): $(TARGET).o overmap_SC.o map.o unit.o cursor.o button.o
 	$(CC) $(LFLAGS) -o $(TARGET) $(TARGET).o overmap_SC.o map.o unit.o cursor.o button.o
+	mv $(TARGET) ..
 
 $(TARGET).o: $(TARGET).c $(TARGET).h unit.h
 	$(CC) $(CFLAGS) -c $(TARGET).c
@@ -37,4 +38,4 @@ button.o: button.c button.h overmap_SC.h cursor.h
 	$(CC) $(CFLAGS) -c button.c
 
 clean:
-	rm $(TARGET) *.o
+	rm ../$(TARGET) *.o
