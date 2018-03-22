@@ -1,6 +1,6 @@
 #ifndef OVERMAP_SC_H
 #define OVERMAP_SC_H
-#include "game.h"	// for the game variable in the data and arguments
+#include <theatre/scene.h> // for props
 #include "map.h"	// for the map in the data
 #include "cursor.h"	// for the cursor in the data
 

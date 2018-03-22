@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <limits.h>
-#include <theatre/layer.h>
+//#include <theatre/theatre.h>
 
 #include "map.h"	// it's own .h file
 #include "cursor.h"	// for update cursor's arguments
-#include "unit.h"	// for flood fill's arguments's arguments
+#include "unit.h"	// for flood fill's argument's arguments
 #include "tile.h"	// for creating tiles
 #include "button.h" // for the unit buttons
 
@@ -14,8 +14,8 @@
 Map *init_map(void) {
 	Map *map = malloc(sizeof(Map));
 	Tile *tile = NULL;
-	map->yLength = 100; // TEMPORARY VALUE
-	map->xLength = 100; // TEMPORARY VALUE
+	map->yLength = 25; // TEMPORARY VALUE
+	map->xLength = 40; // TEMPORARY VALUE
 	map->grid = malloc(sizeof(Tile *) * map->yLength);
 	for (int y = 0; y < map->yLength; y++) {
 		map->grid[y] = malloc(sizeof(Tile) * map->xLength);
@@ -46,7 +46,7 @@ void map_draw(Map *map) {
 		for (int x = 0; x < map->xLength; x++) {
 			Tile *tile = &(map->grid[y][x]);
 			add_icon_to_layer(map->mapLayer, y, x, tile->icon);
-			add_colour_to_layer(map->mapLayer, y, x, 8,
+			add_colour_to_layer(map->mapLayer, y, x, 255, 
 					tile->r, tile->g, tile->b);
 			if (map->grid[y][x].unit) {
 				add_icon_to_layer(map->mapLayer, y, x, tile->unit->icon);
@@ -136,7 +136,7 @@ void draw_range(Unit *unit, Map *map) {
 	for(int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
 			if (unit->moveGrid[y][x] != INT_MIN){
-				add_colour_to_layer(map->rangeLayer, y, x, 8, 0, 215, 255);
+				add_colour_to_layer(map->rangeLayer, y, x, 255, 0, 215, 255);
 			}
 		}
 	}
@@ -176,7 +176,7 @@ void update_cursor(Map *map, Cursor *cursor) {
 	if (tile->unit) {
 		draw_range(tile->unit, map);
 	}
-	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, 8,
+	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, 255,
 			255, 255, 255);
 	return;
 }

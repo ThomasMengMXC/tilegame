@@ -2,7 +2,7 @@
 #define TILE_H
 
 #include <ncurses.h>
-#include <theatre/sprite.h>
+//#include <theatre/theatre.h>
 #include <stdint.h>
 #include "unit.h"
 

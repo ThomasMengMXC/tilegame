@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <theatre/scene.h>
-#include <theatre/screen.h>
+
 #include "overmap_SC.h" // own .h file
-#include "game.h"		// for setting the game variable in the data
 #include "map.h"		// for creating the map in the data
 #include "cursor.h"		// for creating the cursor in the data
 

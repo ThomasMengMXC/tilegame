@@ -2,10 +2,10 @@
 #define MAP_H
 
 #include <ncurses.h>
+#include <theatre/layer.h>
 #include "cursor.h"
 #include "unit.h"
 #include "tile.h"
-#include <theatre/layer.h>
 
 typedef struct {
 	Tile **grid; // First dim is y, second dim is x
