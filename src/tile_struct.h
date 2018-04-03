@@ -1,10 +1,8 @@
-#ifndef TILE_H
-#define TILE_H
+#ifndef TILE_STRUCT_H
+#define TILE_STRUCT_H
 
-#include <ncurses.h>
-//#include <theatre/theatre.h>
 #include <stdint.h>
-#include "unit.h"
+#include "unit_struct.h"
 
 typedef struct Tile{
 	char *icon;

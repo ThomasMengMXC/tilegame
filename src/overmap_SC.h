@@ -1,28 +1,15 @@
 #ifndef OVERMAP_SC_H
 #define OVERMAP_SC_H
-#include <theatre/scene.h> // for props
-#include "map.h"	// for the map in the data
-#include "cursor.h"	// for the cursor in the data
+
+#include <theatre/props_struct.h> // for props
+#include "overmap_struct.h"
 
 #define DATASTRUCT OverMap
 
-typedef enum {
-	PRE_PLAYER_PHASE,
-	PLAYER_MOVE,
-	ENEMY_PHASE,
-} OverMapState;
-
-typedef struct {
-	Map *map; // The map
-	Team *players, *enemies; // The enemy and player teams
-	Cursor *cursor; // The cursor
-	OverMapState state; // The state of the map
-} OverMap;
+DATASTRUCT *init_overmap(void);
 
 void overmap_update(Props *props);
 void overmap_keyboard(Props *props, int ch);
-
-DATASTRUCT *init_overmap(void);
 
 void overmap_entry(Props *props);
 void overmap_exit(Props *props);

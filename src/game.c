@@ -1,9 +1,9 @@
 #include <theatre/play.h>
+#include <theatre/stage.h>
 
 #include "game.h"
 #include "overmap_SC.h"
 
-// left as an exercise for the reader :^)
 int main(int argc, char **argv) {
 	Stage *stage;
 	init_theatre();
@@ -14,6 +14,6 @@ int main(int argc, char **argv) {
 	enact_play(stage);
 
 	free_stage(stage);
-	endwin();
+	finale();
 	return 0;
 }

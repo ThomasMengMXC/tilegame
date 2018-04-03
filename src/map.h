@@ -1,24 +1,16 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <ncurses.h>
-#include <theatre/layer.h>
-#include "cursor.h"
-#include "unit.h"
-#include "tile.h"
-
-typedef struct {
-	Tile **grid; // First dim is y, second dim is x
-	unsigned short yLength, xLength;
-	Layer *mapLayer; // the map layer
-	Layer *rangeLayer; // the range layer
-} Map;
+#include "map_struct.h"
+#include "team_struct.h"
+#include "unit_struct.h"
+#include "cursor_struct.h"
 
 Map *init_map(void);
 void free_map(Map *map);
 void map_draw(Map *map);
 
-void add_units_to_map(Map *map, Team *team);
+void add_team_to_map(Map *map, Team *team);
 
 void init_move_grids(Team *team, Map *map);
 void free_move_grid(Team *team, Map *map);

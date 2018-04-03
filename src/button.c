@@ -1,18 +1,24 @@
+#include <theatre/layer.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "button.h"
 #include "overmap_SC.h"
-#include "cursor.h"
+#include "cursor_struct.h"
 
-int unit_button(void *args) {
-	OverMap *data = (OverMap *) args;
-	Cursor *cursor = data->cursor;
-	cursor->canClick = false;
-	short yPos = cursor->yPos;
-	short xPos = cursor->xPos;
-	Tile *tile = &(data->map->grid[yPos][xPos]);
-	if (tile->unit && cursor->state == DEFAULT) {
-		cursor->unit = tile->unit;
-		cursor->icon = tile->unit->icon;
-		cursor->state = UNIT_SELECTED;
+int unit_button(void *args, short y, short x) {
+	Props *props = (Props *) args;
+	OverMap *data = (OverMap *) props->data;
+	static int bin = 1;
+	if (bin) {
+		char *icon = malloc(sizeof(char) * 3);
+		snprintf(icon, 3, "%2d", data->map->grid[y][x].unit->unitID);
+		add_icon_to_layer(data->map->rangeLayer, y, x, icon);
+		free(icon);
+		bin--;
+	} else {
+		remove_icon_from_layer(data->map->rangeLayer, y, x);
+		bin++;
 	}
 	return 0;
 }
