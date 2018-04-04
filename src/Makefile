@@ -1,5 +1,5 @@
-CFLAGS = -Wall -pedantic -g -std=gnu11 -O3
-LFLAGS = -Wall -ltheatre
+CFLAGS = -Wall -pedantic -g -std=gnu11 -O3 -I$(HOME)/include -march=native -mno-tbm
+LFLAGS = -L$(HOME)/lib -ltheatre -Wl,-R$(HOME)/lib
 CC = gcc
 TARGET = game
 
