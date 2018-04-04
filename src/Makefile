@@ -7,7 +7,10 @@ all: $(TARGET)
 
 play: all
 	valgrind --leak-check=full ../game 2> meme
-
+memtest: all
+	valgrind --tool=massif ../game
+	ms_print massif* | less
+	rm massif*
 
 $(TARGET): $(TARGET).o overmap.so
 	$(CC) game.o $(LFLAGS) -ldl -o $(TARGET)
