@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "backstage.h"
-#include "team.h"
 
 Backstage *init_backstage(void) {
 	Backstage *bs = malloc(sizeof(Backstage));

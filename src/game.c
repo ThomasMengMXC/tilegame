@@ -1,15 +1,11 @@
-#include <dlfcn.h>
-#include <wordexp.h>
-#include <dirent.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <theatre/play.h>
-#include <theatre/stage.h>
-#include <theatre/props.h>
+#include <dlfcn.h> // for the dl loading
+#include <wordexp.h> // for the ~ expansion
+#include <dirent.h> // for the directory parsing
+#include <string.h> // for strlen
+#include <stdlib.h> // for malloc
+#include <theatre/play.h> // for pretty much everything in theatre
 
 #include "game.h"
-//#include "overmap_SC.h"
 
 int main(int argc, char **argv) {
 	Stage *stage;
@@ -81,6 +77,7 @@ void *load_scene(Stage *stage, char *name) {
 
     // dlopen the evaluated path name
 	handle = dlopen(p.we_wordv[0], RTLD_LAZY);
+    fprintf(stderr, "%s\n",  p.we_wordv[0]);
 	wordfree(&p);
     
     // check if the handle screwed up
@@ -91,14 +88,14 @@ void *load_scene(Stage *stage, char *name) {
 	dlerror();
 
 	UpdateFn update; KeyboardFn keyboard;
-	EntryFn entry; ExitFn exit;
+	ArrivalFn arrival; DepartureFn departure;
 
     // load all of the library functions
-	update = (UpdateFn) dlsym(handle, "overmap_update");
-	keyboard = (KeyboardFn) dlsym(handle, "overmap_keyboard");
-	entry = (EntryFn) dlsym(handle, "overmap_entry");
-	exit = (ExitFn) dlsym(handle, "overmap_exit");
+	*(void **)(&update) = dlsym(handle, "update");
+	*(void **)(&keyboard) = dlsym(handle, "keyboard");
+	*(void **)(&arrival) = dlsym(handle, "arrival");
+	*(void **)(&departure) = dlsym(handle, "departure");
     // add the functions to the stage
-	add_scene_to_stage(stage, update, keyboard, entry, exit);
+	add_scene_to_stage(stage, update, keyboard, arrival, departure);
     return handle;
 }

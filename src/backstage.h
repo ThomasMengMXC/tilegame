@@ -1,7 +1,12 @@
 #ifndef BACKSTAGE_H
 #define BACKSTAGE_H
 
-#include "backstage_struct.h"
+#include "team.h"
+
+typedef struct {
+	Team *team;
+	int money;
+} Backstage;
 
 Backstage *init_backstage(void);
 void free_backstage(Backstage *bs);

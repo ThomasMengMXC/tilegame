@@ -20,6 +20,7 @@ overmap.so: overmap_SC.o map.o unit.o cursor.o button.o team.o backstage.o
 	$(CC) -shared `ls *.o | grep -v game.o | tr '\n' ' '` $(LFLAGS) -o overmap.so
 	mkdir -p ~/.config/tilegame/scenes
 	cp overmap.so ~/.config/tilegame/scenes
+	cp ~/.config/tilegame/scenes/overmap.so ~/.config/tilegame/scenes/sc1.so
 
 
 $(TARGET).o: $(TARGET).c

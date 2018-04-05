@@ -1,8 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-
 #include <theatre/layer.h>
+
 #include "map.h"	// it's own .h file
 #include "button.h"
 
@@ -55,8 +54,8 @@ void map_draw(Map *map) {
 
 void add_team_to_map(Map *map, Team *team) {
 	for (int i = 0; i < team->depth ; i++ ) {
-		unsigned int yPos = team->unit[i]->yPos;
-		unsigned int xPos = team->unit[i]->xPos;
+		unsigned int yPos = 0;
+		unsigned int xPos = i;
 		map->grid[yPos][xPos].unit = team->unit[i];
 	}
 	return;

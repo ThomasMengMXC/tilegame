@@ -1,10 +1,7 @@
-#include <theatre/layer.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "button.h"
 #include "overmap_SC.h"
-#include "cursor_struct.h"
 
 int unit_button(void *args, short y, short x) {
 	Props *props = (Props *) args;

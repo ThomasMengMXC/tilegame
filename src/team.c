@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "team.h"
-#include "unit.h"
 
 Team *init_team(void) {
 	Team *team = malloc(sizeof(Team));

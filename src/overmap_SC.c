@@ -1,12 +1,7 @@
 #include <stdlib.h>
-#include <theatre/props.h> // for the 
-#include <theatre/screen.h>
 
 #include "overmap_SC.h" // own .h file
-#include "map.h"		// for creating the map in the data
-#include "cursor.h"		// for creating the cursor in the data
 #include "backstage.h"	// for creating the backstage
-#include "team.h"		// for adding units to team
 
 // Initialising the data struct, not related to scene creation
 DATASTRUCT *init_overmap(void) {
@@ -18,7 +13,7 @@ DATASTRUCT *init_overmap(void) {
 	return data;
 }
 
-void overmap_update(Props *props) {
+void update(Props *props) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
@@ -35,7 +30,7 @@ void overmap_update(Props *props) {
 	return;
 }
 
-void overmap_keyboard(Props *props, int ch) {
+void keyboard(Props *props, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	Cursor *cursor = data->cursor;
 	switch(ch){
@@ -82,7 +77,7 @@ void overmap_keyboard(Props *props, int ch) {
 	return;
 }
 
-void overmap_entry(Props *props) {
+void arrival(Props *props) {
 	props->screen = init_screen(0, 0);
 
 	props->data = init_overmap();
@@ -100,7 +95,6 @@ void overmap_entry(Props *props) {
 	Unit unit0 = { .name = "John Citizen",
 		.icon = ":)",
 		.hp = 10,
-		.yPos = 1, .xPos = 1,
 		.move = 5,
 		.str = 5, .str = 5, .def = 5
 	};
@@ -109,7 +103,6 @@ void overmap_entry(Props *props) {
 		.name = "Joanne Citizen",
 		.icon = ":)",
 		.hp = 10,
-		.yPos = 2, .xPos = 1,
 		.move = 5,
 		.str = 5, .str = 5, .def = 5
 	};
@@ -122,7 +115,7 @@ void overmap_entry(Props *props) {
 	return;
 }
 
-void overmap_exit(Props *props) {
+void departure(Props *props) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	// remove the two layers from the screen and the screen itself
 	free_screen(props->screen);

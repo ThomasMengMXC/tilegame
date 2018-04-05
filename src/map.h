@@ -1,10 +1,17 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "map_struct.h"
-#include "team_struct.h"
-#include "unit_struct.h"
-#include "cursor_struct.h"
+#include "team.h" // Adding team to map
+#include "cursor.h" // Updating the cursor
+#include "tile.h" // the tile grid
+
+typedef struct {
+	Tile **grid; // First dim is y, second dim is x
+	unsigned short yLength, xLength;
+	Layer *mapLayer; // the map layer
+	Layer *rangeLayer; // the range layer
+	
+} Map;
 
 Map *init_map(void);
 void free_map(Map *map);

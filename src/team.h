@@ -1,7 +1,12 @@
 #ifndef TEAM_H
 #define TEAM_H
 
-#include "team_struct.h"
+#include "unit.h"
+
+typedef struct {
+	unsigned char depth;
+	Unit **unit;
+} Team;
 
 Team *init_team(void);
 void free_team(Team *team);
