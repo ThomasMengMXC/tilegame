@@ -77,7 +77,6 @@ void *load_scene(Stage *stage, char *name) {
 
     // dlopen the evaluated path name
 	handle = dlopen(p.we_wordv[0], RTLD_LAZY);
-    fprintf(stderr, "%s\n",  p.we_wordv[0]);
 	wordfree(&p);
     
     // check if the handle screwed up
