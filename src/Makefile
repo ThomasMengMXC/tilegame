@@ -50,4 +50,4 @@ backstage.o: backstage.c
 
 clean:
 	rm -rf ~/.config/tilegame
-	rm -f ../$(TARGET) ./$(TARGET) *.o *.so
+	rm -f ../$(TARGET) ./$(TARGET) *.o *.so meme
