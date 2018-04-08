@@ -2,7 +2,7 @@
 #define OVERMAP_SC_H
 
 #include <theatre/props.h> // for scene function pointers
-#include "map.h"    // for the map in the data
+#include "map.h"	// for the map in the data
 
 #define DATASTRUCT OverMap
 
@@ -22,7 +22,7 @@ typedef struct {
 DATASTRUCT *init_overmap(void);
 
 void update(Props *props);
-void keyboard(Props *props, int ch);
+int keyboard(Props *props, int ch);
 
 void arrival(Props *props);
 void departure(Props *props);

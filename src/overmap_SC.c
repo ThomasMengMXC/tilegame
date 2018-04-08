@@ -30,7 +30,9 @@ void update(Props *props) {
 	return;
 }
 
-void keyboard(Props *props, int ch) {
+// Returning -2 quits the game, returning -1 is normal, and returning a 
+// positive number requests a scene change
+int keyboard(Props *props, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	Cursor *cursor = data->cursor;
 	switch(ch){
@@ -67,14 +69,12 @@ void keyboard(Props *props, int ch) {
 			}
 			break;
 		case 'x':
-			request_sc_change(props, 1);
-			break;
+			return 1;
 		case 'q':
 			free_backstage(*(props->backstage));
-			quit(props);
-			break;
+			return -2;
 	}
-	return;
+	return -1;
 }
 
 void arrival(Props *props) {

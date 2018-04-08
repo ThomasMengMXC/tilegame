@@ -7,7 +7,5 @@ Cursor *init_cursor(void) {
 	cursor->icon = NULL;
 	cursor->xPos = 0;				cursor->yPos = 0;
 	cursor->xOld = cursor->xPos;	cursor->yOld = cursor->yPos;
-	cursor->unit = NULL;
-	cursor->state = DEFAULT;
 	return cursor;
 }

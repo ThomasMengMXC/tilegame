@@ -1,9 +1,10 @@
 CFLAGS = -Wall -pedantic -g -std=gnu11 -O3 -I$(HOME)/include -march=native -mno-tbm
 LFLAGS = -L$(HOME)/lib -ltheatre -Wl,-R$(HOME)/lib
 CC = gcc
-TARGET = game
+SOURCES = $(wildcard *.c)
+OBJECTS = $(SOURCES:.c=.o)
 
-all: $(TARGET)
+all: game
 
 play: all
 	valgrind --leak-check=full ../game 2> meme
@@ -12,9 +13,9 @@ memtest: all
 	ms_print massif* | less
 	rm massif*
 
-$(TARGET): $(TARGET).o overmap.so
-	$(CC) game.o $(LFLAGS) -ldl -o $(TARGET)
-	cp $(TARGET) ..
+game: game.o overmap.so
+	$(CC) game.o $(LFLAGS) -ldl -o game
+	cp game ..
 
 overmap.so: overmap_SC.o map.o unit.o cursor.o button.o team.o backstage.o
 	$(CC) -shared `ls *.o | grep -v game.o | tr '\n' ' '` $(LFLAGS) -o overmap.so
@@ -23,31 +24,9 @@ overmap.so: overmap_SC.o map.o unit.o cursor.o button.o team.o backstage.o
 	cp ~/.config/tilegame/scenes/overmap.so ~/.config/tilegame/scenes/sc1.so
 
 
-$(TARGET).o: $(TARGET).c
-	$(CC) $(CFLAGS) -c $(TARGET).c
-
-
-overmap_SC.o: overmap_SC.c
-	$(CC) $(CFLAGS) -fPIC -c overmap_SC.c
-
-map.o: map.c map.h
-	$(CC) $(CFLAGS) -fPIC -c map.c
-
-unit.o: unit.c
-	$(CC) $(CFLAGS) -fPIC -c unit.c
-
-cursor.o: cursor.c
-	$(CC) $(CFLAGS) -fPIC -c cursor.c
-
-button.o: button.c
-	$(CC) $(CFLAGS) -fPIC -c button.c
-
-team.o: team.c
-	$(CC) $(CFLAGS) -fPIC -c team.c
-
-backstage.o: backstage.c
-	$(CC) $(CFLAGS) -fPIC -c backstage.c
+%.o : %.c %.h
+		$(CC) $(CFLAGS) -fPIC -c $<
 
 clean:
 	rm -rf ~/.config/tilegame
-	rm -f ../$(TARGET) ./$(TARGET) *.o *.so meme
+	rm -f ../game ./game *.o *.so meme
