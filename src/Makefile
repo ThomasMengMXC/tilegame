@@ -1,4 +1,4 @@
-CFLAGS = -Wall -pedantic -g -std=gnu11 -O3 -I$(HOME)/include -march=native -mno-tbm
+CFLAGS = -Wall -pedantic -g -std=gnu11 -O3 -I$(HOME)/include
 LFLAGS = -L$(HOME)/lib -ltheatre -Wl,-R$(HOME)/lib
 CC = gcc
 SOURCES = $(wildcard *.c)
