@@ -9,7 +9,9 @@ DATASTRUCT *init_overmap(void) {
 	data->state = PRE_PLAYER_PHASE;
 	// initialising primary data
 	data->map = init_map();
-	data->cursor = init_cursor();
+	data->mapLayer = NULL;
+	data->rangeLayer = NULL;
+	data->cursorLayer = NULL;
 	return data;
 }
 
@@ -18,7 +20,7 @@ void update(Props *props) {
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
 			//find_range(data->players, data->map);
-			update_cursor(data->map, data->cursor);
+			mv_cursor_absolute(props, 0, 0);
 			data->state = PLAYER_MOVE;
 			break;
 		case PLAYER_MOVE:
@@ -34,42 +36,21 @@ void update(Props *props) {
 // positive number requests a scene change
 int keyboard(Props *props, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
-	Cursor *cursor = data->cursor;
+	Cursor *cursor = props->screen->cursor;
 	switch(ch){
 		case KEY_RESIZE:
-			map_draw(data->map);
+			map_draw(data->map, data->mapLayer);
 			break;	
-		case KEY_UP:
-			if (cursor->yPos > 0) {
-				cursor->yPos--;
-				update_cursor(data->map, cursor);
-			}
-			break;
-		case KEY_DOWN:
-			if (cursor->yPos < data->map->yLength - 1) {
-				cursor->yPos++;
-				update_cursor(data->map, cursor);
-			}
-			break;
-		case KEY_LEFT:
-			if (cursor->xPos > 0) {
-				cursor->xPos--;
-				update_cursor(data->map, cursor);
-			}
-			break;
-		case KEY_RIGHT:
-			if (cursor->xPos < data->map->xLength - 1) {
-				cursor->xPos++;
-				update_cursor(data->map, cursor);
-			}
-			break;
+		case KEY_UP: mv_cursor_relative(props, -1, 0); break;
+		case KEY_DOWN: mv_cursor_relative(props, 1, 0); break;
+		case KEY_LEFT: mv_cursor_relative(props, 0, -1); break;
+		case KEY_RIGHT: mv_cursor_relative(props, 0, 1);  break;
 		case 'z':
 			if (cursor->canClick) {
-				activate_button(cursor->yPos, cursor->xPos, props);
+				activate_button(props, cursor->yPos, cursor->xPos);
 			}
 			break;
-		case 'x':
-			return 1;
+		case 'x': return 1;
 		case 'q':
 			free_backstage(*(props->backstage));
 			return -2;
@@ -88,8 +69,9 @@ void arrival(Props *props) {
 	data->players = ((Backstage *) props->backstage[0])->team;
 
 	// initialising secondary data
-	data->map->mapLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
-	data->map->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
+	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
+	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
+	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
 
 	// initialising a player
 	Unit unit0 = { .name = "John Citizen",
@@ -111,7 +93,7 @@ void arrival(Props *props) {
 	add_team_to_map(data->map, data->players);
 
 	// draw the map
-	map_draw(data->map);
+	map_draw(data->map, data->mapLayer);
 	return;
 }
 
@@ -122,8 +104,6 @@ void departure(Props *props) {
 
 	free_map(data->map);
 
-	// free the cursor
-	free(data->cursor);
 	free(data);
 	return;
 }

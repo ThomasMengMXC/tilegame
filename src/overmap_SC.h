@@ -15,8 +15,8 @@ typedef enum {
 typedef struct {
 	Map *map;
 	Team *players, *enemies; // The enemy and player teams
-	Cursor *cursor;
 	OverMapState state; // The state of the map
+	Layer *mapLayer, *rangeLayer, *cursorLayer;
 } OverMap;
 
 DATASTRUCT *init_overmap(void);

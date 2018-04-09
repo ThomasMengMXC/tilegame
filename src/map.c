@@ -4,6 +4,7 @@
 
 #include "map.h"	// it's own .h file
 #include "button.h"
+#include "hover.h"
 
 // initialises the map object and
 Map *init_map(void) {
@@ -36,16 +37,17 @@ void free_map(Map *map) {
 	return;
 }
 
-void map_draw(Map *map) {
+void map_draw(Map *map, Layer *layer) {
 	for (int y = 0; y < map->yLength; y++) {
 		for (int x = 0; x < map->xLength; x++) {
 			Tile *tile = &(map->grid[y][x]);
-			add_icon_to_layer(map->mapLayer, y, x, tile->icon);
-			add_colour_to_layer(map->mapLayer, y, x, 256, 
+			add_icon_to_layer(layer, y, x, tile->icon);
+			add_colour_to_layer(layer, y, x, 256, 
 					tile->r, tile->g, tile->b);
+			add_hover_to_layer(layer, y, x, map_hover);
 			if (map->grid[y][x].unit) {
-				add_icon_to_layer(map->mapLayer, y, x, tile->unit->icon);
-				add_button_to_layer(map->mapLayer, y, x, unit_button);
+				add_icon_to_layer(layer, y, x, tile->unit->icon);
+				add_button_to_layer(layer, y, x, unit_button);
 			}
 		}
 	}
@@ -60,30 +62,3 @@ void add_team_to_map(Map *map, Team *team) {
 	}
 	return;
 }
-void update_cursor(Map *map, Cursor *cursor) {
-	Tile *tile = &(map->grid[cursor->yPos][cursor->xPos]);
-	//Tile *tileOld = &(map->grid[cursor->yOld][cursor->xOld]);
-	if (cursor->icon) {
-		add_icon_to_layer(map->rangeLayer, tile->yPos, tile->xPos,
-				cursor->icon);
-	}
-	if (cursor->yOld != cursor->yPos || cursor->xOld != cursor->xPos) {
-		remove_colour_from_layer(map->rangeLayer,
-				cursor->yOld, cursor->xOld);
-		if (cursor->icon) {
-			remove_icon_from_layer(map->rangeLayer, cursor->yOld,
-					cursor->xOld);
-		}
-		//undraw_range(tileOld->unit, map);
-		cursor->yOld = cursor->yPos;
-		cursor->xOld = cursor->xPos;
-	}
-	if (tile->unit) {
-		//draw_range(tile->unit, map);
-	}
-	add_colour_to_layer(map->rangeLayer, tile->yPos, tile->xPos, 256,
-			255, 255, 255);
-	return;
-}
-
-
