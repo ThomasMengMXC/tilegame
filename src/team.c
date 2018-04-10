@@ -18,11 +18,11 @@ void free_team(Team *team) {
 }
 
 // creates a new unit on the team and returns a pointer to said new unit
-Unit *add_unit_to_team(Team *team, Unit unit) {
-	unit.unitID = team->depth;
+Unit *add_unit_to_team(Team *team, unsigned int *unitIDPool, char *name) {
 	team->depth++;
 	team->unit = realloc(team->unit, sizeof(Unit *) * team->depth);
-	team->unit[team->depth - 1] = init_unit(unit);
+	team->unit[team->depth - 1] = init_unit(name, *unitIDPool);
+	(*unitIDPool)++;
 	return team->unit[team->depth - 1];
 }
 

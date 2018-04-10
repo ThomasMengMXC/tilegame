@@ -9,15 +9,25 @@
 // initialises the map object and
 Map *init_map(void) {
 	Map *map = malloc(sizeof(Map));
-	Tile *tile = NULL;
 	map->yLength = 25; // TEMPORARY VALUE
 	map->xLength = 40; // TEMPORARY VALUE
-	map->grid = malloc(sizeof(Tile *) * map->yLength);
-	for (int y = 0; y < map->yLength; y++) {
-		map->grid[y] = malloc(sizeof(Tile) * map->xLength);
-		for (int x = 0; x < map->xLength; x++) {
-			tile = &(map->grid[y][x]);
+	map->grid = init_grid(map->yLength, map->xLength);
+	return map;
+}
 
+void free_map(Map *map) {
+	free_grid(map->grid, map->yLength, map->xLength);
+	free(map);
+	return;
+}
+
+Tile **init_grid(unsigned short yLength, unsigned short xLength) {
+	Tile *tile = NULL;
+	Tile **grid = malloc(sizeof(Tile *) * yLength);
+	for (int y = 0; y < yLength; y++) {
+		grid[y] = malloc(sizeof(Tile) * xLength);
+		for (int x = 0; x < xLength; x++) {
+			tile = &(grid[y][x]);
 			tile->icon = ". ";
 			tile->r = 0; tile->g = 135; tile->b = 0;
 			tile->mvCost = 1;
@@ -25,16 +35,14 @@ Map *init_map(void) {
 			tile->yPos = y; tile->xPos = x;
 		}
 	}
-	return map;
+	return grid;
 }
 
-void free_map(Map *map) {
-	for (int y = 0; y < map->yLength; y++) {
-		free(map->grid[y]);
+void free_grid(Tile **grid, unsigned short yLength, unsigned short xLength) {
+	for (int y = 0; y < yLength; y++) {
+		free(grid[y]);
 	}
-	free(map->grid);
-	free(map);
-	return;
+	free(grid);
 }
 
 void map_draw(Map *map, Layer *layer) {

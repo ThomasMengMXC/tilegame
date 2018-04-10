@@ -11,7 +11,7 @@ typedef struct {
 	unsigned short str, spd, def;
 } Unit;
 
-Unit *init_unit(Unit unit);
+Unit *init_unit(char *name, unsigned int unitID);
 void free_unit(Unit *unit);
 
 #endif

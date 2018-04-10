@@ -19,7 +19,6 @@ void update(Props *props) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	switch(data->state) {
 		case PRE_PLAYER_PHASE:
-			//find_range(data->players, data->map);
 			mv_cursor_absolute(props, 0, 0);
 			data->state = PLAYER_MOVE;
 			break;
@@ -63,10 +62,12 @@ void arrival(Props *props) {
 
 	props->data = init_overmap();
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
-	if (*(props->backstage) == NULL) {
-		*(props->backstage) = init_backstage();
+	Backstage *bs = NULL;
+	if (*props->backstage == NULL) {
+		*props->backstage = init_backstage();
 	}
-	data->players = ((Backstage *) props->backstage[0])->team;
+	bs = *props->backstage;
+	data->players = bs->team;
 
 	// initialising secondary data
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
@@ -74,22 +75,8 @@ void arrival(Props *props) {
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
 
 	// initialising a player
-	Unit unit0 = { .name = "John Citizen",
-		.icon = ":)",
-		.hp = 10,
-		.move = 5,
-		.str = 5, .str = 5, .def = 5
-	};
-	
-	Unit unit1 = {
-		.name = "Joanne Citizen",
-		.icon = ":)",
-		.hp = 10,
-		.move = 5,
-		.str = 5, .str = 5, .def = 5
-	};
-	add_unit_to_team(data->players, unit0);
-	add_unit_to_team(data->players, unit1);
+	add_unit_to_team(data->players, &bs->unitIDPool, "John Citizen");
+	add_unit_to_team(data->players, &bs->unitIDPool, "Jane Citizen");
 	add_team_to_map(data->map, data->players);
 
 	// draw the map

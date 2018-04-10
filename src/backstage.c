@@ -5,6 +5,7 @@ Backstage *init_backstage(void) {
 	Backstage *bs = malloc(sizeof(Backstage));
 	bs->team = init_team();
 	bs->money = 0;
+	bs->unitIDPool = 0;
 	return bs;
 }
 

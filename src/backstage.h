@@ -6,6 +6,7 @@
 typedef struct {
 	Team *team;
 	int money;
+	unsigned int unitIDPool;
 } Backstage;
 
 Backstage *init_backstage(void);
