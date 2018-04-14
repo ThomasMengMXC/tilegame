@@ -49,7 +49,7 @@ int keyboard(Props *props, int ch) {
 				activate_button(props, cursor->yPos, cursor->xPos);
 			}
 			break;
-		case 'x': return 1;
+		case 'x': remove_layer_from_scr(props->screen); break;
 		case 'q':
 			free_backstage(*(props->backstage));
 			return -2;
@@ -73,6 +73,7 @@ void arrival(Props *props) {
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
+    add_colour_to_layer(add_layer_to_scr(props->screen, 0, 41, 1, 1), 0, 0, 256, 50, 100, 150);
 
 	// initialising a player
 	add_unit_to_team(data->players, &bs->unitIDPool, "John Citizen");
