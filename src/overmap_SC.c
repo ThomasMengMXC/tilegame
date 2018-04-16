@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <theatre/colour.h>
 
 #include "overmap_SC.h" // own .h file
 #include "backstage.h"	// for creating the backstage
@@ -73,7 +74,8 @@ void arrival(Props *props) {
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
-    add_colour_to_layer(add_layer_to_scr(props->screen, 0, 41, 1, 1), 0, 0, 256, 50, 100, 150);
+    add_colour_to_layer(add_layer_to_scr(props->screen, 0, 41, 1, 1), 0, 0,
+			rgb_to_term256(50, 100, 150));
 
 	// initialising a player
 	add_unit_to_team(data->players, &bs->unitIDPool, "John Citizen");

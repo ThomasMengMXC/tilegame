@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <theatre/layer.h>
+#include <theatre/colour.h>
 
 #include "map.h"	// it's own .h file
 #include "button.h"
@@ -50,8 +51,8 @@ void map_draw(Map *map, Layer *layer) {
 		for (int x = 0; x < map->xLength; x++) {
 			Tile *tile = &(map->grid[y][x]);
 			add_icon_to_layer(layer, y, x, tile->icon);
-			add_colour_to_layer(layer, y, x, 256, 
-					tile->r, tile->g, tile->b);
+			add_colour_to_layer(layer, y, x,
+					rgb_to_term256(tile->r, tile->g, tile->b));
 			add_hover_to_layer(layer, y, x, map_hover);
 			if (map->grid[y][x].unit) {
 				add_icon_to_layer(layer, y, x, tile->unit->icon);
