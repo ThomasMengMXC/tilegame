@@ -19,15 +19,15 @@ DATASTRUCT *init_overmap(void) {
 void update(Props *props) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	switch(data->state) {
-		case PRE_PLAYER_PHASE:
-			mv_cursor_absolute(props, 0, 0);
-			data->state = PLAYER_MOVE;
-			break;
-		case PLAYER_MOVE:
-			draw_screen(props->screen);
-			break;
-		case ENEMY_PHASE:
-			break;
+	case PRE_PLAYER_PHASE:
+		mv_cursor_absolute(props, 0, 0);
+		data->state = PLAYER_MOVE;
+		break;
+	case PLAYER_MOVE:
+		draw_screen(props->screen);
+		break;
+	case ENEMY_PHASE:
+		break;
 	}
 	return;
 }
@@ -38,22 +38,36 @@ int keyboard(Props *props, int ch) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	Cursor *cursor = props->screen->cursor;
 	switch(ch){
-		case KEY_RESIZE:
-			map_draw(data->map, data->mapLayer);
-			break;	
-		case KEY_UP: mv_cursor_relative(props, -1, 0); break;
-		case KEY_DOWN: mv_cursor_relative(props, 1, 0); break;
-		case KEY_LEFT: mv_cursor_relative(props, 0, -1); break;
-		case KEY_RIGHT: mv_cursor_relative(props, 0, 1);  break;
-		case 'z':
-			if (cursor->canClick) {
-				activate_button(props, cursor->yPos, cursor->xPos);
-			}
-			break;
-		case 'x': remove_layer_from_scr(props->screen); break;
-		case 'q':
-			free_backstage(*(props->backstage));
-			return -2;
+	case 'w':
+		mv_layer_relative(data->mapLayer, -1, 0);
+		mv_layer_relative(data->rangeLayer, -1, 0);
+		break;
+	case 's':
+		mv_layer_relative(data->mapLayer, 1, 0);
+		mv_layer_relative(data->rangeLayer, 1, 0);
+		break;
+	case 'a':
+		mv_layer_relative(data->mapLayer, 0, -1);
+		mv_layer_relative(data->rangeLayer, 0, -1);
+		break;
+	case 'd':
+		mv_layer_relative(data->mapLayer, 0, 1);
+		mv_layer_relative(data->rangeLayer, 0, 1);
+		break;
+	case KEY_RESIZE: map_draw(data->map, data->mapLayer); break;	
+	case KEY_UP: mv_cursor_relative(props, -1, 0); break;
+	case KEY_DOWN: mv_cursor_relative(props, 1, 0); break;
+	case KEY_LEFT: mv_cursor_relative(props, 0, -1); break;
+	case KEY_RIGHT: mv_cursor_relative(props, 0, 1);  break;
+	case 'z':
+		if (cursor->canClick) {
+			activate_button(props, cursor->yPos, cursor->xPos);
+		}
+		break;
+	case 'x': remove_layer_from_scr(props->screen); break;
+	case 'q':
+		free_backstage(*(props->backstage));
+		return -2;
 	}
 	return -1;
 }
@@ -74,7 +88,7 @@ void arrival(Props *props) {
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
-    add_colour_to_layer(add_layer_to_scr(props->screen, 0, 41, 1, 1), 0, 0,
+	add_colour_to_layer(add_layer_to_scr(props->screen, 0, 41, 1, 1), 0, 0,
 			rgb_to_term256(50, 100, 150));
 
 	// initialising a player
