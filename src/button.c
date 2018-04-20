@@ -3,10 +3,15 @@
 #include "button.h"
 #include "overmap_SC.h"
 
-int unit_button(void *args, short y, short x) {
-	Props *props = (Props *) args;
+int unit_button(Props *props, Layer *layer, short y, short x) {
 	OverMap *data = (OverMap *) props->data;
 	static int bin = 1;
+	y -= layer->yOffset;
+	x -= layer->xOffset;
+	if (y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return 0;
+	}
 	if (bin) {
 		char *icon = malloc(sizeof(char[3]));
 		snprintf(icon, 3, "%2d", data->map->grid[y][x].unit->unitID);

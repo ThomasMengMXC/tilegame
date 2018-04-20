@@ -35,8 +35,10 @@ void update(Props *props) {
 // Returning -2 quits the game, returning -1 is normal, and returning a 
 // positive number requests a scene change
 int keyboard(Props *props, int ch) {
+	if (!ch) return -1;
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
 	Cursor *cursor = props->screen->cursor;
+	activate_hover(props, 0, cursor->yPos, cursor->xPos);
 	switch(ch){
 	case 'w':
 		mv_layer_relative(data->mapLayer, -1, 0);
@@ -59,16 +61,11 @@ int keyboard(Props *props, int ch) {
 	case KEY_DOWN: mv_cursor_relative(props, 1, 0); break;
 	case KEY_LEFT: mv_cursor_relative(props, 0, -1); break;
 	case KEY_RIGHT: mv_cursor_relative(props, 0, 1);  break;
-	case 'z':
-		if (cursor->canClick) {
-			activate_button(props, cursor->yPos, cursor->xPos);
-		}
-		break;
+	case 'z': activate_button(props, cursor->yPos, cursor->xPos); break;
 	case 'x': remove_layer_from_scr(props->screen); break;
-	case 'q':
-		free_backstage(*(props->backstage));
-		return -2;
+	case 'q': free_backstage(*(props->backstage)); return -2;
 	}
+	activate_hover(props, 1, cursor->yPos, cursor->xPos);
 	return -1;
 }
 

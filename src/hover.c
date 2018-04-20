@@ -2,8 +2,7 @@
 #include "hover.h"
 #include "overmap_SC.h"
 
-int map_hover(void *args, char start, short y, short x) {
-	Props *props = (Props *) args;
+int map_hover(Props *props, Layer *layer, char start, short y, short x) {
 	OverMap *data = (OverMap *) props->data;
 	if (start) {
 		add_colour_to_layer(data->cursorLayer, y, x,

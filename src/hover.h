@@ -1,6 +1,8 @@
 #ifndef HOVER_H
 #define HOVER_H
 
-int map_hover(void *args, char start, short y, short x);
+#include <theatre/props.h>
+
+int map_hover(Props *props, Layer *layer, char start, short y, short x);
 
 #endif
