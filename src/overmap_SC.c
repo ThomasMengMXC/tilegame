@@ -84,9 +84,9 @@ void arrival(Props *props) {
 	// initialising secondary data
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
+	add_colour_to_layer(add_layer_to_scr(props->screen, 0, 20, 1, 1), 0, 0,
+			(Colour){.r = 50, .g = 100, .b = 150, .a = 200});
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
-	add_colour_to_layer(add_layer_to_scr(props->screen, 0, 41, 1, 1), 0, 0,
-			rgb_to_term256(50, 100, 150));
 
 	// initialising a player
 	add_unit_to_team(data->players, &bs->unitIDPool, "John Citizen");

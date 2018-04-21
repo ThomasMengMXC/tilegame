@@ -6,7 +6,7 @@ int map_hover(Props *props, Layer *layer, char start, short y, short x) {
 	OverMap *data = (OverMap *) props->data;
 	if (start) {
 		add_colour_to_layer(data->cursorLayer, y, x,
-				rgb_to_term256(255, 255, 255));
+				(Colour){.r = 255, .g = 255, .b = 255, .a = 128});
 	} else {
 		remove_colour_from_layer(data->cursorLayer, y, x);
 	}
