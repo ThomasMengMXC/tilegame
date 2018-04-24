@@ -14,7 +14,6 @@ void free_team(Team *team) {
 		remove_unit_from_team(team);
 	}
 	free(team);
-	return;
 }
 
 // creates a new unit on the team and returns a pointer to said new unit
@@ -31,11 +30,10 @@ void remove_unit_from_team(Team *team) {
 	
 	if (team->depth > 1) {
 		team->depth--;
-		team->unit = realloc(team->unit, sizeof(Team *) * team->depth);
+		team->unit = realloc(team->unit, sizeof(Unit *) * team->depth);
 	} else if (team->depth == 1) {
 		team->depth--;
 		free(team->unit);
 		team->unit = NULL;
 	}
-	return;
 }

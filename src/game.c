@@ -66,7 +66,6 @@ void unload_all_scenes(void **handles) {
 	for (int i = 0; handles[i] != NULL; i++) {
 		dlclose(handles[i]);
 	}
-	return;
 }
 
 void *load_scene(Stage *stage, char *name) {

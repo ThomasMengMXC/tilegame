@@ -12,5 +12,4 @@ Backstage *init_backstage(void) {
 void free_backstage(Backstage *bs) {
 	free_team(bs->team);
 	free(bs);
-	return;
 }

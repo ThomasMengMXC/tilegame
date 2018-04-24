@@ -20,7 +20,6 @@ Map *init_map(void) {
 void free_map(Map *map) {
 	free_grid(map->grid, map->yLength, map->xLength);
 	free(map);
-	return;
 }
 
 Tile **init_grid(unsigned short yLength, unsigned short xLength) {
@@ -65,7 +64,6 @@ void map_draw(Map *map, Layer *layer) {
 			}
 		}
 	}
-	return;
 }
 
 void add_team_to_map(Map *map, Team *team) {
@@ -74,5 +72,4 @@ void add_team_to_map(Map *map, Team *team) {
 		unsigned int xPos = i;
 		map->grid[yPos][xPos].unit = team->unit[i];
 	}
-	return;
 }

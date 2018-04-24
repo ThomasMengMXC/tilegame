@@ -13,13 +13,13 @@ int unit_button(Props *props, Layer *layer, short y, short x) {
 		return 0;
 	}
 	if (bin) {
-		char *icon = malloc(sizeof(char[3]));
-		snprintf(icon, 5, "%4d", data->map->grid[y][x].unit->unitID);
-		add_icon_to_layer(data->rangeLayer, y, x, icon, 4);
+		char *icon = malloc(sizeof(char[2]) * 3 + 1);
+		snprintf(icon, 6, "WOW:%1d", data->map->grid[y][x].unit->unitID);
+		add_icon_to_layer(data->rangeLayer, y, x, icon, 5);
 		free(icon);
 		bin--;
 	} else {
-		remove_icon_from_layer(data->rangeLayer, y, x, 4);
+		remove_icon_from_layer(data->rangeLayer, y, x, 5);
 		bin++;
 	}
 	return 0;

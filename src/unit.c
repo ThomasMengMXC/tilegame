@@ -16,5 +16,4 @@ Unit *init_unit(char *name, unsigned int unitID) {
 
 void free_unit(Unit *unit) {
 	free(unit);
-	return;
 }

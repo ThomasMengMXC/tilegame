@@ -18,9 +18,10 @@ DATASTRUCT *init_overmap(void) {
 
 void update(Props *props) {
 	DATASTRUCT *data = (DATASTRUCT *) props->data;
+	Cursor *cursor = props->screen->cursor;
 	switch(data->state) {
 	case PRE_PLAYER_PHASE:
-		mv_cursor_absolute(props, 0, 0);
+		activate_hover(props, 1, cursor->yPos, cursor->xPos);
 		data->state = PLAYER_MOVE;
 		break;
 	case PLAYER_MOVE:
@@ -29,7 +30,6 @@ void update(Props *props) {
 	case ENEMY_PHASE:
 		break;
 	}
-	return;
 }
 
 // Returning -2 quits the game, returning -1 is normal, and returning a 
@@ -62,8 +62,15 @@ int keyboard(Props *props, int ch) {
 	case KEY_LEFT: mv_cursor_relative(props, 0, -1); break;
 	case KEY_RIGHT: mv_cursor_relative(props, 0, 1);  break;
 	case 'z': activate_button(props, cursor->yPos, cursor->xPos); break;
-	case 'x': remove_layer_from_scr(props->screen); break;
-	case 'q': free_backstage(*(props->backstage)); return -2;
+	case 'x': {
+		Layer *layer = remove_layer_from_scr(props->screen);
+		if (layer == data->mapLayer) data->mapLayer = NULL;
+		if (layer == data->rangeLayer) data->rangeLayer = NULL;
+		if (layer == data->cursorLayer) data->cursorLayer = NULL;
+		break;
+	}
+	case 'q': free_backstage(*props->backstage); return -2;
+	case 'c': return 1;
 	}
 	activate_hover(props, 1, cursor->yPos, cursor->xPos);
 	return -1;
@@ -84,9 +91,10 @@ void arrival(Props *props) {
 	// initialising secondary data
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
-	add_colour_to_layer(add_layer_to_scr(props->screen, 0, 20, 1, 1), 0, 0,
-			(Colour){.r = 50, .g = 100, .b = 150, .a = 200});
+	add_colour_to_layer(add_layer_to_scr(props->screen, 0, 0, 0, 0), 5, 5,
+			(Colour) {.r = 255, .b = 100, .g = 30, .a = 128});
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
+
 
 	// initialising a player
 	add_unit_to_team(data->players, &bs->unitIDPool, "John Citizen");
@@ -95,7 +103,6 @@ void arrival(Props *props) {
 
 	// draw the map
 	map_draw(data->map, data->mapLayer);
-	return;
 }
 
 void departure(Props *props) {
@@ -106,5 +113,4 @@ void departure(Props *props) {
 	free_map(data->map);
 
 	free(data);
-	return;
 }
