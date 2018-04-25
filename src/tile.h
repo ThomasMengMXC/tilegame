@@ -1,16 +1,21 @@
 #ifndef TILE_STRUCT_H
 #define TILE_STRUCT_H
 
-#include <stdint.h>
+extern "C" {
+#include <theatre/colour.h>
+}
+
+#include <cstdint>
 #include "unit.h"
 
-typedef struct Tile{
-	char *icon;
-	uint8_t r, g, b;
-	signed short mvCost;
-	unsigned short yPos, xPos;
+class Tile {
+	public:
+		char icon[3];
+		Colour colour;
+		int8_t mvCost;
+		uint16_t yPos, xPos;
 
-	Unit *unit;
-} Tile;
+		Unit *unit;
+};
 
 #endif

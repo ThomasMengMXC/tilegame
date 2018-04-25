@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "button.h"
 #include "overmap_SC.h"
 
@@ -13,13 +11,13 @@ int unit_button(Props *props, Layer *layer, short y, short x) {
 		return 0;
 	}
 	if (bin) {
-		char *icon = malloc(sizeof(char[2]) * 3 + 1);
-		snprintf(icon, 6, "WOW:%1d", data->map->grid[y][x].unit->unitID);
-		add_icon_to_layer(data->rangeLayer, y, x, icon, 5);
-		free(icon);
+		char *icon = new char[7];
+		snprintf(icon, 6, "WOW:%1d", data->map->grid[y][x].unit->unitID % 10);
+		add_icon_to_layer(data->rangeLayer, y, x, icon, 6);
+		delete[] icon;
 		bin--;
 	} else {
-		remove_icon_from_layer(data->rangeLayer, y, x, 5);
+		remove_icon_from_layer(data->rangeLayer, y, x, 6);
 		bin++;
 	}
 	return 0;

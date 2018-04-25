@@ -1,23 +1,26 @@
-#include <stdlib.h>
+extern "C" {
 #include <theatre/colour.h>
+}
 
 #include "overmap_SC.h" // own .h file
 #include "backstage.h"	// for creating the backstage
 
 // Initialising the data struct, not related to scene creation
-DATASTRUCT *init_overmap(void) {
-	DATASTRUCT *data = malloc(sizeof(DATASTRUCT));
-	data->state = PRE_PLAYER_PHASE;
-	// initialising primary data
-	data->map = init_map();
-	data->mapLayer = NULL;
-	data->rangeLayer = NULL;
-	data->cursorLayer = NULL;
-	return data;
+OverMap::OverMap(void) {
+	this->state = PRE_PLAYER_PHASE;
+	this->map = new Map();
+	this->mapLayer = NULL;
+	this->rangeLayer = NULL;
+	this->cursorLayer = NULL;
 }
 
+OverMap::~OverMap(void) {
+	delete this->map;
+}
+
+extern "C" {
 void update(Props *props) {
-	DATASTRUCT *data = (DATASTRUCT *) props->data;
+	OverMap *data = (OverMap *) props->data;
 	Cursor *cursor = props->screen->cursor;
 	switch(data->state) {
 	case PRE_PLAYER_PHASE:
@@ -36,7 +39,7 @@ void update(Props *props) {
 // positive number requests a scene change
 int keyboard(Props *props, int ch) {
 	if (!ch) return -1;
-	DATASTRUCT *data = (DATASTRUCT *) props->data;
+	OverMap *data = (OverMap *) props->data;
 	Cursor *cursor = props->screen->cursor;
 	activate_hover(props, 0, cursor->yPos, cursor->xPos);
 	switch(ch){
@@ -56,7 +59,7 @@ int keyboard(Props *props, int ch) {
 		mv_layer_relative(data->mapLayer, 0, 1);
 		mv_layer_relative(data->rangeLayer, 0, 1);
 		break;
-	case KEY_RESIZE: map_draw(data->map, data->mapLayer); break;	
+	case KEY_RESIZE: resize_screen(props->screen); break;
 	case KEY_UP: mv_cursor_relative(props, -1, 0); break;
 	case KEY_DOWN: mv_cursor_relative(props, 1, 0); break;
 	case KEY_LEFT: mv_cursor_relative(props, 0, -1); break;
@@ -69,7 +72,7 @@ int keyboard(Props *props, int ch) {
 		if (layer == data->cursorLayer) data->cursorLayer = NULL;
 		break;
 	}
-	case 'q': free_backstage(*props->backstage); return -2;
+	case 'q': delete (Backstage *) *props->backstage; return -2;
 	case 'c': return 1;
 	}
 	activate_hover(props, 1, cursor->yPos, cursor->xPos);
@@ -79,38 +82,41 @@ int keyboard(Props *props, int ch) {
 void arrival(Props *props) {
 	props->screen = init_screen(0, 0);
 
-	props->data = init_overmap();
-	DATASTRUCT *data = (DATASTRUCT *) props->data;
+	props->data = (OverMap *) new OverMap();
+	OverMap *data = (OverMap *) props->data;
 	Backstage *bs = NULL;
 	if (*props->backstage == NULL) {
-		*props->backstage = init_backstage();
+		*props->backstage = new Backstage();
 	}
-	bs = *props->backstage;
+	bs = (Backstage *) *props->backstage;
 	data->players = bs->team;
 
 	// initialising secondary data
 	data->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	data->rangeLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
-	add_colour_to_layer(add_layer_to_scr(props->screen, 0, 0, 0, 0), 5, 5,
-			(Colour) {.r = 255, .b = 100, .g = 30, .a = 128});
 	data->cursorLayer = add_layer_to_scr(props->screen, 0, 0, 0, 0);
 
 
 	// initialising a player
-	add_unit_to_team(data->players, &bs->unitIDPool, "John Citizen");
-	add_unit_to_team(data->players, &bs->unitIDPool, "Jane Citizen");
-	add_team_to_map(data->map, data->players);
+	data->players.push_back(new Unit("John Citizen", bs->unitIDPool++));
+	data->players.push_back(new Unit("Jane Citizen", bs->unitIDPool++));
+	data->map->add_team_to_map(data->players);
 
 	// draw the map
-	map_draw(data->map, data->mapLayer);
+	data->map->map_draw(data->mapLayer);
 }
 
 void departure(Props *props) {
-	DATASTRUCT *data = (DATASTRUCT *) props->data;
+	OverMap *data = (OverMap *) props->data;
+	for (size_t i = 0; i < data->players.size(); i++) {
+		delete data->players[i];
+	}
+	for (size_t i = 0; i < data->enemies.size(); i++) {
+		delete data->players[i];
+	}
 	// remove the two layers from the screen and the screen itself
+	clear_screen(props->screen);
 	free_screen(props->screen);
-
-	free_map(data->map);
-
-	free(data);
+	delete data;
+}
 }

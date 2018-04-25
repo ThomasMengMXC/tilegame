@@ -1,15 +1,17 @@
 #ifndef BACKSTAGE_H
 #define BACKSTAGE_H
 
-#include "team.h"
+#include <vector>
 
-typedef struct {
-	Team *team;
-	int money;
-	unsigned int unitIDPool;
-} Backstage;
+#include "unit.h"
 
-Backstage *init_backstage(void);
-void free_backstage(Backstage *bs);
+class Backstage {
+	public:
+		std::vector<Unit *> team;
+		int money;
+		unsigned int unitIDPool;
+
+		Backstage(void);
+};
 
 #endif

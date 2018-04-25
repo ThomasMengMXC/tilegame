@@ -1,9 +1,11 @@
+extern "C" {
 #include <dlfcn.h> // for the dl loading
 #include <wordexp.h> // for the ~ expansion
 #include <dirent.h> // for the directory parsing
 #include <string.h> // for strlen
 #include <stdlib.h> // for malloc
 #include <theatre/play.h> // for pretty much everything in theatre
+}
 
 #include "game.h"
 
@@ -17,7 +19,7 @@ int main(int argc, char **argv) {
 	stage = init_stage();
 
 	// getting the scripts ready from ~/.config/tilegame/scenes
-	char *config = "~/.config/tilegame/scenes";
+	const char *config = "~/.config/tilegame/scenes";
 	void **handles = load_all_scenes(stage, config);
 
 	// start the show
@@ -34,7 +36,7 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void **load_all_scenes(Stage *stage, char *directory) {
+void **load_all_scenes(Stage *stage, const char *directory) {
 	wordexp_t p;
 	wordexp(directory, &p, 0);
 
@@ -42,15 +44,16 @@ void **load_all_scenes(Stage *stage, char *directory) {
 	struct dirent *ent;
 	int sceneCount = 0;
 	void **handles = NULL;
-	handles = realloc(handles, sizeof(void *) * (sceneCount + 1));
+	handles = (void **) realloc(handles, sizeof(void *) * (sceneCount + 1));
 	if ((dir = opendir(p.we_wordv[0])) != NULL) {
 		while ((ent = readdir (dir)) != NULL) {
-			char *name = malloc(sizeof(char) * (strlen(directory)
+			char *name = (char *) malloc(sizeof(char) * (strlen(directory)
 						+ strlen(ent->d_name) + 2));
 			if (ent->d_name[0] != '.') {
 				sprintf(name, "%s/%s", directory, ent->d_name);
 				sceneCount++;
-				handles = realloc(handles, sizeof(void *) * (sceneCount + 1));
+				handles = (void **) realloc(handles,
+						sizeof(void *) * (sceneCount + 1));
 				handles[sceneCount - 1] = load_scene(stage, name);
 			}
 			free(name);

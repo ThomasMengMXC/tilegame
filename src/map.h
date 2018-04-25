@@ -1,22 +1,27 @@
 #ifndef MAP_H
 #define MAP_H
+extern "C" {
+#include <theatre/layer.h>
+}
 
-#include "team.h" // Adding team to map
+#include <vector>
+
+#include "unit.h" // Adding team to map
 #include "tile.h" // the tile grid
 
-typedef struct {
-	Tile **grid; // First dim is y, second dim is x
-	unsigned short yLength, xLength;
-} Map;
+class Map {
+	public:
+		uint16_t yLength, xLength;
+		Tile **grid;
 
-Map *init_map(void);
-void free_map(Map *map);
+		Map(void);
+		~Map(void);
+		void map_draw(Layer *layer);
+		void add_team_to_map(std::vector<Unit *> team);
 
-Tile **init_grid(unsigned short yLength, unsigned short xLength);
-void free_grid(Tile **grid, unsigned short yLength, unsigned short xLength);
-
-void map_draw(Map *map, Layer *layer);
-
-void add_team_to_map(Map *map, Team *team);
+	private:
+		Tile **init_grid(void);
+		void free_grid(void);
+};
 
 #endif

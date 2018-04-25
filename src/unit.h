@@ -1,17 +1,19 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-typedef struct {
-	char name[20];
-	unsigned int unitID;
+#include <cstdint>
 
-	char icon[3];
-	short hp;
-	unsigned short move;
-	unsigned short str, spd, def;
-} Unit;
+class Unit {
+	public:
+		char name[20];
+		uint16_t unitID;
 
-Unit *init_unit(char *name, unsigned int unitID);
-void free_unit(Unit *unit);
+		char icon[3];
+		int16_t hp;
+		uint16_t move;
+		uint16_t str, spd, def;
+
+		Unit(const char *name, uint16_t unitId);
+};
 
 #endif
