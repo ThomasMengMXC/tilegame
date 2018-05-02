@@ -3,17 +3,20 @@
 
 extern "C" {
 #include <theatre/colour.h>
+#include <theatre/vector2D.h>
 }
 
 #include <cstdint>
 #include "unit.h"
+
+class Unit;
 
 class Tile {
 	public:
 		char icon[3];
 		Colour colour;
 		int8_t mvCost;
-		uint16_t yPos, xPos;
+		Vector2D pos;
 
 		Unit *unit;
 };

@@ -12,9 +12,11 @@ OverMap::OverMap(void) {
 	this->mapLayer = NULL;
 	this->rangeLayer = NULL;
 	this->cursorLayer = NULL;
+	this->enemies = new std::vector<Unit *>;
 }
 
 OverMap::~OverMap(void) {
+	delete this->enemies;
 	delete this->map;
 }
 
@@ -24,6 +26,7 @@ void update(Props *props) {
 	Cursor *cursor = props->screen->cursor;
 	switch(data->state) {
 	case PRE_PLAYER_PHASE:
+		data->map->calculate_ranges();
 		activate_hover(props, 1, cursor->yPos, cursor->xPos);
 		data->state = PLAYER_MOVE;
 		break;
@@ -98,25 +101,23 @@ void arrival(Props *props) {
 
 
 	// initialising a player
-	data->players.push_back(new Unit("John Citizen", bs->unitIDPool++));
-	data->players.push_back(new Unit("Jane Citizen", bs->unitIDPool++));
-	data->map->add_team_to_map(data->players);
+	data->players->push_back(new Unit("John Citizen", bs->unitIDPool++));
+	data->players->push_back(new Unit("Jane Citizen", bs->unitIDPool++));
+	data->map->place_team(data->players);
 
 	// draw the map
-	data->map->map_draw(data->mapLayer);
+	data->map->draw(data->mapLayer);
 }
 
 void departure(Props *props) {
 	OverMap *data = (OverMap *) props->data;
-	for (size_t i = 0; i < data->players.size(); i++) {
-		delete data->players[i];
-	}
-	for (size_t i = 0; i < data->enemies.size(); i++) {
-		delete data->players[i];
+	for (size_t i = 0; i < data->enemies->size(); i++) {
+		delete (*data->enemies)[i];
 	}
 	// remove the two layers from the screen and the screen itself
 	clear_screen(props->screen);
 	free_screen(props->screen);
+	props->screen = NULL;
 	delete data;
 }
 }

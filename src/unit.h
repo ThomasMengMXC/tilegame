@@ -2,6 +2,9 @@
 #define UNIT_H
 
 #include <cstdint>
+#include "tile.h"
+
+class Tile;
 
 class Unit {
 	public:
@@ -10,8 +13,9 @@ class Unit {
 
 		char icon[3];
 		int16_t hp;
-		uint16_t move;
+		int16_t move;
 		uint16_t str, spd, def;
+		Tile *tile;
 
 		Unit(const char *name, uint16_t unitId);
 };

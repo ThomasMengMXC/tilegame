@@ -6,7 +6,7 @@ CC = g++
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
 
-all: game
+all: game overmap.so
 
 play: all
 	valgrind --leak-check=full ../game 2> meme
@@ -14,8 +14,10 @@ memtest: all
 	valgrind --tool=massif ../game
 	ms_print massif* | less
 	rm massif*
+analyse:
+	clang-tidy -fix *.cc -- -std=c++17 -I/home/thomas/include
 
-game: game.o overmap.so
+game: game.o
 	$(CC) game.o $(LFLAGS) -o game $(LIBS)
 	cp game ..
 

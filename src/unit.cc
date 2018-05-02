@@ -9,4 +9,5 @@ Unit::Unit(const char *name, uint16_t unitID) {
 	this->hp = 10;
 	this->move = 5;
 	this->str = 5; this->spd = 5; this->def = 5;
+	this->tile = NULL;
 }

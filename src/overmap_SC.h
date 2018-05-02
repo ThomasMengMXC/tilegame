@@ -15,7 +15,7 @@ typedef enum {
 class OverMap{
 	public:
 		Map *map;
-		std::vector<Unit *> players, enemies; // The enemy and player teams
+		std::vector<Unit *> *players, *enemies; // The enemy and player teams
 		OverMapState state; // The state of the map
 		Layer *mapLayer, *rangeLayer, *cursorLayer;
 
