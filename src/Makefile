@@ -3,6 +3,7 @@ CFLAGS = -Wall -pedantic -g -std=c11 -O3 -I$(DIRECTORY)/include
 LFLAGS = -L$(DIRECTORY)/lib -Wl,-R$(DIRECTORY)/lib
 LIBS = -ltheatre -llua
 CC = gcc
+
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -20,8 +21,8 @@ game: game.o $(OBJECTS)
 	$(CC) *.o $(LFLAGS) -o game $(LIBS)
 	cp game ..
 
-%.o : %.cc %.h
-		$(CC) $(CFLAGS) -fPIC -c $<
+%.o : %.c %.h
+	$(CC) $(CFLAGS) -fPIC -c $<
 
 clean:
 	rm -rf ~/.config/tilegame

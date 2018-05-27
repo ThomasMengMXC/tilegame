@@ -1,4 +1,17 @@
-map = {}
+local map = {}
+local tile = setmetatable({}, {
+	__index = {
+		icon = ". ",
+		colour = setmetatable({}, {
+			__index = {
+				r = 0, g = 255, b = 0, a = 255,
+			}
+		}),
+		mvCost = 1,
+		pos = setmetatable({}, {__index = {x = 0, y = 0}}),
+		unit = {}
+	}
+})
 
 function map:new(yLength, xLength)
 	local obj = {}
@@ -7,18 +20,10 @@ function map:new(yLength, xLength)
 	for y = 0, yLength do
 		obj[y] = {}
 		for x = 0, xLength do
-			obj[y][x] = setmetatable({}, {__index = {
-				icon = ". ",
-				colour = setmetatable({}, {__index = {
-					r = 0, g = 0, b = 0, a = 0
-				}}),
-				mvCost = 1,
-				pos = setmetatable({}, {__index = {x = 0, y = 0}}),
-				unit = {}
-			}})
+			obj[y][x] = setmetatable({}, {__index = tile})
 		end
 	end
-	return setmetatable({}, {__index = obj})
+	return setmetatable(obj, {__index = self})
 end
 
 function map:draw(layer)
@@ -33,9 +38,9 @@ function map:draw(layer)
 		end
 	end
 
-	for y = 0, map.yLength do
-		for x = 0, map.xLength do
-			local tile = map[y][x]
+	for y = 0, self.yLength do
+		for x = 0, self.xLength do
+			local tile = self[y][x]
 			layer:add_icon(y, x, tile.icon, 2)
 			layer:add_colour(y, x, tile.colour)
 			layer:add_hover(y, x, hover)

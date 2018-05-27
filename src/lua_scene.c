@@ -9,19 +9,19 @@
 void update(Props *props) {
 	lua_State *l = (lua_State *) props->data;
 	lua_getglobal(l, "update");
-	lua_getglobal(l, "props");
+	lua_getglobal(l, "stage");
 	if (lua_pcall(l, 1, 0, 0) != 0) {
-		fprintf(stderr, "something went wrong in update\n");
+		fprintf(stderr, "Something went wrong in update\n");
 	}
 }
 
 int keyboard(Props *props, int ch) {
 	lua_State *l = (lua_State *) props->data;
 	lua_getglobal(l, "keyboard");
-	lua_getglobal(l, "props");
+	lua_getglobal(l, "stage");
 	lua_pushinteger(l, ch);
 	if (lua_pcall(l, 2, 1, 0) != 0) {
-		fprintf(stderr, "something went wrong in keyboard\n");
+		fprintf(stderr, "Something went wrong in keyboard\n");
 		// return if the keyboard messed up
 		return -2;
 	}
@@ -42,11 +42,11 @@ void arrival(Props *props, int sceneNumber) {
 	// loads the main file
 	luaL_dofile(l, "main.lua");
 	lua_newtable(l);
-	lua_setglobal(l, "props");
+	lua_setglobal(l, "stage");
 
 	// runs the arrival function
 	lua_getglobal(l, "arrival");
-	lua_getglobal(l, "props");
+	lua_getglobal(l, "stage");
 	Screen_register(l);
 	Layer_register(l);
 	luaL_openlibs(l);
@@ -60,9 +60,9 @@ void departure(Props *props) {
 
 	// runs the departure function
 	lua_getglobal(l, "departure");
-	lua_getglobal(l, "props");
+	lua_getglobal(l, "stage");
 	if (lua_pcall(l, 1, 0, 0) != 0) {
-		fprintf(stderr, "something went wrong in departure\n");
+		fprintf(stderr, "Something went wrong in departure\n");
 	}
 
 	lua_close(l);
