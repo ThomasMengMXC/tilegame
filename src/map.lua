@@ -1,17 +1,11 @@
 local map = {}
-local tile = setmetatable({}, {
-	__index = {
-		icon = ". ",
-		colour = setmetatable({}, {
-			__index = {
-				r = 0, g = 255, b = 0, a = 255,
-			}
-		}),
-		mvCost = 1,
-		pos = setmetatable({}, {__index = {x = 0, y = 0}}),
-		unit = {}
-	}
-})
+local tile = {
+	icon = ". ",
+	colour = {r = 0, g = 255, b = 0, a = 255},
+	mvCost = 1,
+	pos = {x = 0, y = 0},
+	unit = {}
+}
 
 function map:new(yLength, xLength)
 	local obj = {}
@@ -20,7 +14,13 @@ function map:new(yLength, xLength)
 	for y = 0, yLength do
 		obj[y] = {}
 		for x = 0, xLength do
-			obj[y][x] = setmetatable({}, {__index = tile})
+			obj[y][x] = setmetatable({
+				colour = {
+					r = 0, b = 0, g = 0, a = 255,
+				}
+			}, {
+				__index = tile
+			})
 		end
 	end
 	return setmetatable(obj, {__index = self})

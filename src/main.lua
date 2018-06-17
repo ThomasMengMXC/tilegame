@@ -23,13 +23,9 @@ function arrival(stage)
 			-- haha nice try
 		end
 	})
-	setmetatable(stage, {
-		__index =  {
-			scenes = {}, -- an array of all the scenes
-			currentScene = {}, -- a pointer for the current Scene
-			backstage = {}, -- for communication between scenes
-		}
-	})
+	stage.scenes = {}
+	stage.currentScene = {}
+	stage.backstage = {}
 	local order = secure_require("order")
 	load_scenes(stage, order)
 end

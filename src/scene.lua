@@ -1,6 +1,4 @@
 local scene = {
-	props = setmetatable({}, {__newindex = function() end}),
-
 	update = function(props)
 	end,
 

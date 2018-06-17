@@ -8,6 +8,16 @@ local sc1 = setmetatable({
 }, scene)
 
 function sc1.update(props)
+	local map = props.data.map
+	for y = 0, map.yLength do
+		for x = 0, map.xLength do
+			local col = map[y][x].colour
+			col.r = col.r + y // 2
+			col.g = col.g + x // 2
+			col.b = col.r + col.g
+		end
+	end
+	map:draw(props.data.mapLayer)
 	props.screen:draw()
 end
 
