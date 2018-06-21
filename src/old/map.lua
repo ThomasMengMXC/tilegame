@@ -7,6 +7,15 @@ local tile = {
 	unit = {}
 }
 
+local hover = function (props, start, y, x)
+	local lyr = props.cursorLayer
+	if (start) then
+		lyr:add_colour(y, x, {r = 255, g = 255, g = 255, a = 128})
+	else
+		lyr:remove_colour(y, x)
+	end
+end
+
 function map:new(yLength, xLength)
 	local obj = {}
 	obj.yLength = yLength
@@ -17,7 +26,10 @@ function map:new(yLength, xLength)
 			obj[y][x] = setmetatable({
 				colour = {
 					r = 0, b = 0, g = 0, a = 255,
-				}
+				},
+				pos = {
+					x = x, y = y
+				},
 			}, {
 				__index = tile
 			})
@@ -28,15 +40,6 @@ end
 
 function map:draw(layer)
 	layer:clear()
-
-	local hover = function (props, start, y, x)
-		local lyr = props.cursorLayer
-		if (start) then
-			lyr:add_colour(y, x, {r = 255, g = 255, g = 255, a = 128})
-		else
-			lyr:remove_colour(y, x)
-		end
-	end
 
 	for y = 0, self.yLength do
 		for x = 0, self.xLength do

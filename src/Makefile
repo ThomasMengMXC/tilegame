@@ -1,7 +1,7 @@
 DIRECTORY = $(HOME)
 CFLAGS = -Wall -pedantic -g -std=c11 -O3 -I$(DIRECTORY)/include
 LFLAGS = -L$(DIRECTORY)/lib -Wl,-R$(DIRECTORY)/lib
-LIBS = -ltheatre -llua
+LIBS = -ltheatre `pkg-config --libs lua`
 CC = gcc
 
 SOURCES = $(wildcard *.c)
