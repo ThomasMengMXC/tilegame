@@ -1,4 +1,3 @@
-#include <luajit-2.0/luajit.h>
 #include "overmap.h"
 #include "backstage.h"
 #include "map.h"
@@ -14,10 +13,10 @@ int keyboard(Props *props, int ch) {
 }
 
 void arrival(Props *props, int sceneNum) {
-	Backstage *bs = *props->backstage;
-	fprintf(stderr, "%d\n", bs->halp);
-	Map *map = init_map(40, 25);
-	free_map(map);
+	//Backstage *bs = *props->backstage;
+	Map *map = init_map("lev1.lua");
+	if (map)
+		free_map(map);
 }
 
 void departure(Props *props) {

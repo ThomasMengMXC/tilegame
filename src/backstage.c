@@ -3,7 +3,7 @@
 
 Backstage *init_backstage(void) {
 	Backstage *bs = malloc(sizeof(Backstage));
-	bs->halp = 10;
+	bs->halp = 0;
 	return bs;
 }
 

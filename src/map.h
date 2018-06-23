@@ -9,10 +9,7 @@ typedef struct Map {
 	Tile **grid;
 } Map;
 
-Map *init_map(unsigned yLength, unsigned xLength);
+Map *init_map(char *filename);
 void free_map(Map *map);
-
-Tile **init_grid(unsigned yLength, unsigned xLength);
-void free_grid(Tile **grid, unsigned yLength, unsigned xLength);
 
 #endif
