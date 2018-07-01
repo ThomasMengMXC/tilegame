@@ -15,7 +15,8 @@ Map *init_map(char *filename) {
 	unsigned yLength, xLength;
 	Map *map = malloc(sizeof(Map));
 	lua_State *L = luaL_newstate();
-	luaL_dofile(L, filename); // load the file into the lua state
+	if (luaL_dofile(L, filename)) // load the file into the lua state
+		goto error;
 	if (lua_getfield(L, 1, "map") != LUA_TTABLE)
 		goto error; // fails if the map is not a table
 	if (lua_getfield(L, 1, "tiles") != LUA_TTABLE)
@@ -61,6 +62,22 @@ void free_map(Map *map) {
 	free(map);
 }
 
+void draw_map(Map *map, Layer *layer) {
+	clear_layer(layer);
+	for (int y = 0; y < map->yLength; y++) {
+		for (int x = 0; x < map->xLength; x++) {
+			Tile *tile = &(map->grid[y][x]);
+			add_icon_to_layer(layer, y, x, tile->icon, 2);
+			add_colour_to_layer(layer, y, x, tile->colour);
+			//add_hover_to_layer(layer, y, x, map_hover);
+			if (map->grid[y][x].unit) {
+				//add_icon_to_layer(layer, y, x, tile->unit->icon, 2);
+				//add_button_to_layer(layer, y, x, unit_button);
+			}
+		}
+	}
+}
+
 static void free_grid(Tile **grid, unsigned yLength, unsigned xLength) {
 	for (int y = 0; y < yLength; y++) {
 		free(grid[y]);
@@ -88,22 +105,22 @@ static Tile *init_row(lua_State *L, unsigned rowNum) {
 
 		if (lua_getfield(L, -1, "r") != LUA_TNUMBER)
 			goto error;
-		row[i].col.r = lua_tointeger(L, -1);
+		row[i].colour.r = lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		if (lua_getfield(L, -1, "g") != LUA_TNUMBER)
 			goto error;
-		row[i].col.g = lua_tointeger(L, -1);
+		row[i].colour.g = lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		if (lua_getfield(L, -1, "b") != LUA_TNUMBER)
 			goto error;
-		row[i].col.b = lua_tointeger(L, -1);
+		row[i].colour.b = lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		if (lua_getfield(L, -1, "a") != LUA_TNUMBER)
 			goto error;
-		row[i].col.a = lua_tointeger(L, -1);
+		row[i].colour.a = lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		if (lua_getfield(L, -1, "mvCost") != LUA_TNUMBER)

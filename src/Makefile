@@ -1,5 +1,6 @@
 DIRECTORY = $(HOME)
-CFLAGS = -Wall -pedantic -g -std=c11 -O3 -I$(DIRECTORY)/include
+CFLAGS = -Wall -pedantic -g -std=c11 -O3 -I$(DIRECTORY)/include \
+		 -fms-extensions
 LFLAGS = -L$(DIRECTORY)/lib -Wl,-R$(DIRECTORY)/lib
 LIBS = -ltheatre `pkg-config --libs lua`
 CC = gcc
@@ -19,11 +20,9 @@ memtest: all
 
 game: game.o $(OBJECTS)
 	$(CC) *.o $(LFLAGS) -o game $(LIBS)
-	cp game ..
 
 %.o : %.c %.h
 	$(CC) $(CFLAGS) -fPIC -c $<
 
 clean:
-	rm -rf ~/.config/tilegame
-	rm -f ../game ./game *.o *.so meme
+	rm -f ./game *.o *.so meme

@@ -2,13 +2,16 @@
 #define TILE_H
 #include <theatre/colour.h>
 #include <theatre/vector2D.h>
+#include "unit.h"
+
+struct Unit;
 
 typedef struct Tile {
 	char icon[3];
-	Colour col;
+	Colour colour;
 	int mvCost;
 	Vector2D pos;
-	void *unit; // replace this with the actual unit eventually
+	struct Unit *unit;
 } Tile;
 
 #endif
