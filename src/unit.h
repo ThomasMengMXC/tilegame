@@ -1,22 +1,28 @@
 #ifndef UNIT_H
 #define UNIT_H
 
+#include <map>
+#include <string>
 #include "tile.h"
 
-struct Tile;
+class Tile;
 
-typedef struct Unit {
-	char name[20];
-	unsigned unitID;
+class Unit {
+	public:
+		char name[20];
 
-	char icon[3];
-	short hp;
-	short move;
-	unsigned str, spd, def;
-	struct Tile *tile;
-} Unit;
+		char icon[3];
+		unsigned maxHp;
+		short hp;
+		short move;
+		unsigned str, spd, def;
+		unsigned factionID, unitID; // faction and ID for the current map.
+		Tile *tile;
+		// subscriptions, e.g. is main character or other classifications
+		std::map<std::string, bool> sub;
 
-Unit *init_unit(char *name, unsigned unitID);
-void free_unit(Unit *unit);
+		Unit(const char *name);
+		~Unit(void);
+};
 
 #endif

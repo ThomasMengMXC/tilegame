@@ -1,11 +1,16 @@
 #ifndef BACKSTAGE_H
 #define BACKSTAGE_H
 
-typedef struct Backstage {
-	int halp;
-} Backstage;
+#include <list>
+#include "unit.h"
 
-Backstage *init_backstage(void);
-void free_backstage(Backstage *bs);
+class Backstage {
+	public:
+		std::list<Unit *> units;
+		int money;
+
+		Backstage(void);
+		~Backstage(void);
+};
 
 #endif

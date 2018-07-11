@@ -1,10 +1,13 @@
+extern "C" {
 #include <theatre/theatre.h>
+}
+#include "main.h"
 #include "overmap.h"
 #include "backstage.h"
 
 int main(int argc, char **argv) {
 	Stage *stage;
-	Backstage *bs = init_backstage();
+	Backstage *bs = new Backstage();
 
 	// pre show set up
 	init_theatre();
@@ -16,7 +19,7 @@ int main(int argc, char **argv) {
 	enact_play(stage);
 
 	// clean up the stage
-	free_backstage(bs);
+	delete bs;
 	free_stage(stage);
 	finale();
 	return 0;
