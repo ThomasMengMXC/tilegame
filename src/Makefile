@@ -1,6 +1,5 @@
 DIRECTORY = $(HOME)
-CFLAGS = -Wall -pedantic -g -std=c++17 -O3 -I$(DIRECTORY)/include \
-		 -fms-extensions
+CFLAGS = -Wall -pedantic -g -std=gnu++2a -O3 -I$(DIRECTORY)/include
 LFLAGS = -L$(DIRECTORY)/lib -Wl,-R$(DIRECTORY)/lib
 LIBS = -ltheatre `pkg-config --libs luajit`
 CC = g++
@@ -19,7 +18,7 @@ memtest: all
 	rm massif*
 
 game: $(OBJECTS)
-	$(CC) *.o $(LFLAGS) -o game $(LIBS) $(LIBS)
+	$(CC) *.o $(LFLAGS) -o game $(LIBS)
 
 %.o : %.cc *.h
 	$(CC) $(CFLAGS) -fPIC -c $<

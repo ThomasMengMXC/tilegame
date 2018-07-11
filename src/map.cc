@@ -1,3 +1,6 @@
+extern "C" {
+#include <curses.h>
+}
 #include <luajit-2.0/lua.hpp>
 #include <cstdlib>
 #include <cstring>
@@ -80,9 +83,13 @@ void Map::draw(Layer *layer) {
 			add_icon_to_layer(layer, y, x, tile->icon, 2);
 			add_colour_to_layer(layer, y, x, tile->colour);
 			//add_hover_to_layer(layer, y, x, this_hover);
-			if (this->grid[y][x].unit) {
+			if (tile->unit) {
 				add_icon_to_layer(layer, y, x, tile->unit->icon, 2);
 				//add_button_to_layer(layer, y, x, unit_button);
+			}
+			if (tile->eventID) {
+				add_colour_to_layer(layer, y, x, tile->eventColour);
+				add_attr_to_layer(layer, y, x, A_BLINK);
 			}
 		}
 	}
