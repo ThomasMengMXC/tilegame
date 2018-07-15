@@ -2,11 +2,11 @@
 #define TILE_H
 
 extern "C" {
-#include <theatre/colour.h>
+#include <theatre/colour.h> // for the tile's colour
 }
-#include "unit.h"
+#include "unit.h" // for storing the unit
 
-class Unit;
+class Unit; // so the compiler will stop bugging me about circular requiring
 
 class Tile {
 	public:

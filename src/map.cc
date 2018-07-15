@@ -1,18 +1,18 @@
 extern "C" {
-#include <curses.h>
+#include <curses.h> // import curses for the attr_t flags
 }
-#include <luajit-2.0/lua.hpp>
-#include <cstdlib>
-#include <cstring>
-#include <queue>
-#include "map.h"
+#include <luajit-2.0/lua.hpp> // for Lua
+#include <cstring> // for strncpy
+#include <queue> // for the queues for the pathfinding
+#include "map.h" // it's own .h file
 
+// these are static and therefore local to the this file
 static void free_grid(Tile **grid, unsigned yLength, unsigned xLength);
 static Tile *init_row(lua_State *L, int index, unsigned rowNum);
 
 /*
  * This function creates a map from a lua file.
- * If any part of the map is wrong, the funciton will return NULL.
+ * If any part of the map is wrong, the function will return NULL.
  */
 Map::Map(const char *filename) {
 	unsigned yLength = 0, xLength = 0;
@@ -63,121 +63,196 @@ out:
 	lua_close(L);
 }
 
+/*
+ * Destructs the map.
+ */
 Map::~Map(void) {
 	free_grid(this->grid, this->yLength, this->xLength);
-	for (auto &facPair: this->factions) {
-		for (auto &unitPair: facPair.second) {
-			delete unitPair.second;
-		}
+	// iterate through the list of units and delete them all
+	for (auto unitPair: this->units) {
+		delete unitPair.second;
 	}
-	for (auto &grids: this->moveGrids) {
+	// iterate through the list of movegrids and delete them all
+	for (auto grids: this->moveGrids) {
 		this->free_move_grid(grids.second);
 	}
 }
 
+/*
+ * Draws the map to a layer
+ */
 void Map::draw(Layer *layer) {
+	// clears the layer so that it will be empty when we draw on it
 	clear_layer(layer);
+	// iterate through every tile
 	for (unsigned y = 0; y < this->yLength; y++) {
 		for (unsigned x = 0; x < this->xLength; x++) {
 			Tile *tile = &(this->grid[y][x]);
+			// add the tile's icon to the layer at y and x
 			add_icon_to_layer(layer, y, x, tile->icon, 2);
+			// add the tile's colour to the layer at y and x
 			add_colour_to_layer(layer, y, x, tile->colour);
+			// this is commented out since I haven't gotten around to
+			// writing the hover function yet
 			//add_hover_to_layer(layer, y, x, this_hover);
+			
+			// if the tile has a unit on it, then do something
 			if (tile->unit) {
+				// add the unit's icon in addition to the tile's icon
 				add_icon_to_layer(layer, y, x, tile->unit->icon, 2);
+				// this is commented out for the same reason
 				//add_button_to_layer(layer, y, x, unit_button);
 			}
+			// if the eventID is not 0
 			if (tile->eventID) {
+				// add the event's colour on top of the tile
 				add_colour_to_layer(layer, y, x, tile->eventColour);
+				// add the blinking attribute to the tile
 				add_attr_to_layer(layer, y, x, A_BLINK);
 			}
 		}
 	}
 }
 
+/*
+ * Just returns a new factionID
+ */
 int Map::new_faction(void) {
 	this->factionIDs++;
 	return this->factionIDs - 1;
 }
 
+/*
+ * Adds a unit to a faction
+ */
 int Map::add_unit(unsigned factionID, Unit *unit, unsigned y, unsigned x) {
-	std::pair<unsigned, unsigned> pos;
-
+	std::pair<unsigned, unsigned> pos; // the position to place the unit
+	// check if the position of the unit is out of bounds or not
 	if (	y < this->yLength && y >= 0 &&
 			x < this->xLength && x >= 0) {
+		// set the unit's factionID and unitID
 		unit->factionID = factionID;
 		unit->unitID = this->unitIDs;
 		pos.first = y;
 		pos.second = x;
-		this->place_unit(unit, pos);
+		// add the unit to the list of all units.
 		this->units[unit->unitID] = unit;
+		// add the unit to the faction's list of units
 		this->factions[factionID][unit->unitID] = unit;
+		// place the unit at the position
+		this->place_unit(unit, pos);
 
+		// increment the unitID so that the next unit will have a diff ID
 		this->unitIDs++;
 		return unit->unitID - 1;
 	} else {
+		// says something failed
 		return -1;
 	}
 }
 
+/*
+ * Changes the faction of the unit
+ */
 void Map::change_faction(unsigned unitID, unsigned factionID) {
+	// if the unit or faction does not exist, return
 	if (this->units.count(unitID) == 0
 			|| this->factions.count(factionID) == 0)
 		return;
+	// get the unit
 	Unit *unit = this->units[unitID];
 	// remove unit from old faction
-	this->factions[unit->factionID].erase(unit->unitID);
+	this->factions[unit->factionID].erase(unitID);
+	// change the unit's factionID
 	this->units[unitID]->factionID = factionID;
-	this->factions[unit->factionID][unit->unitID] = unit;
+	// add the unit to the faction's list of units
+	this->factions[unit->factionID][unitID] = unit;
 }
 
+/*
+ * Getter for the size of a faction
+ */
 unsigned Map::faction_size(unsigned factionID) {
 	return this->factions[factionID].size();
 }
 
+/*
+ * Moves the unit from one tile to another.
+ * If the tile is occupied, then returns false
+ */
 bool Map::move_unit(unsigned yOld, unsigned xOld,
 		unsigned yNew, unsigned xNew) {
+	// the original and destination coordinates
 	std::pair<unsigned, unsigned> origTmp, destTmp;
 	origTmp.first = yOld; origTmp.second = xOld;
 	destTmp.first = yNew; destTmp.second = xNew;
-	std::pair<unsigned, unsigned> tmp = this->closest_without_unit(destTmp);
-	if (tmp.first != destTmp.first || tmp.second != destTmp.first)
+	// check if the grid already has a unit on it
+	if (this->grid[destTmp.first][destTmp.second].unit)
 		return false;
 	Unit *unit = this->grid[origTmp.first][origTmp.second].unit;
-	return this->place_unit(unit, destTmp);
+	// remove unit from the old tile
+	this->grid[origTmp.first][origTmp.second].unit = NULL;
+
+	// set the tile to hold unit and vice versa
+	this->grid[destTmp.first][destTmp.second].unit = unit;
+	unit->tile = &(this->grid[destTmp.first][destTmp.second]);
+	return true;
 }
 
+/*
+ * Adds an event tile to the map
+ */
 void Map::event_tile(unsigned y, unsigned x,
 		const char *name, Colour col, int eventID) {
+	// checks if y and x are in bounds
 	if (	y < this->yLength && y >= 0 &&
 			x < this->xLength && x >= 0) {
 		Tile *tile = &(this->grid[y][x]);
 		tile->eventID = eventID;
 		tile->eventColour = col;
-		strncpy(tile->eventName, name, sizeof(tile->eventName));
+		// copy the name of the event
+		strncpy(tile->eventName, name, sizeof(tile->eventName) - 1);
+		tile->eventName[sizeof(tile->eventName) - 1] = '\0';
 	}
 }
 // private ---------------------
 
+/* 
+ * Places the unit onto position pos or a nearby tile. Returns false
+ * if it could not place it on pos.
+ */
 bool Map::place_unit(Unit *unit, std::pair<unsigned, unsigned> pos) {
-	pos = this->closest_without_unit(pos);
-	Tile *tile = &(this->grid[pos.first][pos.second]);
-	if (!tile->unit) {
-		if (this->moveGrids.count(unit->unitID) == 0) {
-			this->moveGrids[unit->unitID] = init_move_grid();
-		}
-		this->grid[pos.first][pos.second].unit = unit;
-		unit->tile = &(this->grid[pos.first][pos.second]);
-		return true;
-	} else {
-		return false;
+	// get the closest tile without a unit
+	auto tmp = this->closest_without_unit(pos);
+	// if the unit doesn't have a movegrid, then make one
+	if (this->moveGrids.count(unit->unitID) == 0) {
+		this->moveGrids[unit->unitID] = init_move_grid();
 	}
+	// place unit on the tile
+	this->grid[tmp.first][tmp.second].unit = unit;
+	// tell the unit what tile it's on
+	unit->tile = &(this->grid[tmp.first][tmp.second]);
+	this->unit_range(unit->unitID);
+	// checks if the pos is the original
+	if (tmp.first != pos.first || tmp.second != pos.second)
+		return false;
+	else
+		return true;
 }
 
+/*
+ * Removes the unit from the grid
+ */
 bool Map::remove_unit(std::pair<unsigned, unsigned> pos) {
 	Tile *tile = &(this->grid[pos.first][pos.second]);
+	// checks if the tile actually has a unit on it
 	if (tile->unit) {
-		tile->unit->tile = NULL;
+		Unit *unit = tile->unit;
+		// remove unit from its faction
+		this->factions[unit->factionID].erase(unit->unitID);
+		// change the unit's factionID
+		this->units.erase(unit->unitID);
+		unit->tile = NULL;
 		tile->unit = NULL;
 		return true;
 	} else {
@@ -185,6 +260,9 @@ bool Map::remove_unit(std::pair<unsigned, unsigned> pos) {
 	}
 }
 
+/*
+ * Creates a grid of shorts the same size as the map.
+ */
 short **Map::init_move_grid(void) {
 	short **grid = new short *[this->yLength];
 	for (unsigned y = 0; y < this->yLength; y++) {
@@ -196,6 +274,9 @@ short **Map::init_move_grid(void) {
 	return grid;
 }
 
+/*
+ * Deletes aforementioned grid.
+ */
 void Map::free_move_grid(short **grid) {
 	for (unsigned y = 0; y < this->yLength; y++) {
 		delete[] grid[y];
@@ -203,27 +284,37 @@ void Map::free_move_grid(short **grid) {
 	delete[] grid;
 }
 
-void Map::unit_range(Unit *unit, short **range) {
+/*
+ * Sets the range grid to be the positions where the unit can move
+ */
+void Map::unit_range(unsigned unitID) {
+	short **range = this->moveGrids[unitID];
+	Unit *unit = this->units[unitID];
+	// set everything in range to INT16_MIN
 	for (unsigned y = 0; y < this->yLength; y++) {
 		for (unsigned x = 0; x < this->xLength; x++) {
 			range[y][x] = INT16_MIN;
 		}
 	}
+	// co-oridinates
 	std::pair<unsigned, unsigned> pos, tmp;
+	// the amount of tiles that can be moved
 	short moveRange;
-	std::queue<std::pair<unsigned, unsigned>> posQueue;
-	std::queue<short> moveQueue;
-	posQueue.push(unit->tile->pos);
-	moveQueue.push(unit->move);
+	// temporary definition
+#define mv_pos std::pair<short, std::pair<unsigned, unsigned>>
+	// a pair of moveRanges and coordinates
+	std::queue<mv_pos> posQueue;
+
+	posQueue.push(mv_pos(unit->move, unit->tile->pos));
 	while (!posQueue.empty()) {
-		pos = posQueue.front();
-		moveRange = moveQueue.front();
+		auto tmp2 = posQueue.front();
+		moveRange = tmp2.first;
+		pos = tmp2.second;
 		posQueue.pop();
-		moveQueue.pop();
-		if (range[pos.first][pos.second] < moveRange) {
+		if (range[pos.first][pos.second] < moveRange)
 			range[pos.first][pos.second] = moveRange;
-		}
-		if (moveRange < 1) continue;
+		if (moveRange < 1)
+			continue;
 		for (unsigned i = 0; i < 4; i++) {
 			tmp.first = pos.first + ((i + 0) % 2) * (i >> 1 ? +1 : -1);
 			tmp.second = pos.second + ((i + 1) % 2) * (i >> 1 ? +1 : -1);
@@ -231,12 +322,12 @@ void Map::unit_range(Unit *unit, short **range) {
 					tmp.second >= 0 && tmp.second < this->xLength) {
 				if (range[tmp.first][tmp.second] < moveRange - 1) {
 					// TEMPORARY, MAKE THIS DO SOMETHING
-					posQueue.push(tmp);
-					moveQueue.push(moveRange - 1); // THIS TOO
+					posQueue.push(mv_pos(moveRange - 1, tmp));
 				}
 			}
 		}
 	}
+#undef mv_pos
 }
 
 std::pair<unsigned, unsigned>

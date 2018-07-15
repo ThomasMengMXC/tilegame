@@ -1,11 +1,10 @@
-#include <stdlib.h>
-#include <string.h>
+#include <cstring> // for copying the function param to the fields
 #include "unit.h"
 
 Unit::Unit(const char *name) {
-	strncpy(this->name, name, sizeof(this->name) - 1);
+	strncpy(this->name, name, sizeof(this->name) - 1); // copy name to field
 	this->name[sizeof(this->name) -1] = '\0';
-	strncpy(this->icon, "??", sizeof(this->icon));
+	strncpy(this->icon, "??", sizeof(this->icon)); //default icon of ??
 	this->hp = this->maxHp = 1;
 	this->move = 1;
 	this->str = 0;

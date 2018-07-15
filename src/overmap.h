@@ -14,13 +14,16 @@ typedef enum Phase {
 
 class OverMap {
 	public:
+		lua_State *L;
 		Map *map;
 		Layer *mapLayer;
-		lua_State *L;
-		Phase phase;
+		int winRef;
 
-		OverMap(void);
+		OverMap(const char *directory);
 		~OverMap(void);
+		bool in_directory(void);
+	private:
+		Phase phase;
 };
 
 extern "C" {

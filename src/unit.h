@@ -1,11 +1,11 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#include <map>
-#include <string>
-#include "tile.h"
+#include <map> // for maps
+#include <string> // for the subscription names
+#include "tile.h" // so that the unit can be placed on a tile
 
-class Tile;
+class Tile; // so the compiler will stop bugging me about circular including
 
 class Unit {
 	public:
@@ -14,7 +14,7 @@ class Unit {
 		char icon[3];
 		unsigned maxHp;
 		short hp;
-		short move;
+		short move; // the amount amount of map units this unit can move
 		unsigned str, spd, def;
 		unsigned factionID, unitID; // faction and ID for the current map.
 		Tile *tile;

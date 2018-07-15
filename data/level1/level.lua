@@ -6,7 +6,7 @@ return {
 			return false
 		end
 	end,
-	map = "forest.lua",
+	map = "forest.lua", -- the map is loaded before the builder function
 	starting = {
 		{0, 0},
 		{0, 1},
