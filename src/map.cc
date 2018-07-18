@@ -1,6 +1,7 @@
 extern "C" {
 #include <curses.h> // import curses for the attr_t flags
 }
+#include <climits>
 #include <luajit-2.0/lua.hpp> // for Lua
 #include <cstring> // for strncpy
 #include <queue> // for the queues for the pathfinding
@@ -109,6 +110,21 @@ void Map::draw(Layer *layer) {
 				add_colour_to_layer(layer, y, x, tile->eventColour);
 				// add the blinking attribute to the tile
 				add_attr_to_layer(layer, y, x, A_BLINK);
+			}
+		}
+	}
+	Colour col;
+	col.r = 0;
+	col.g = 0;
+	col.b = 255;
+	col.a = 100;
+	for (auto pair: this->units) {
+		short **grid = this->moveGrids[pair.second->unitID];
+		for (unsigned y = 0; y < this->yLength; y++) {
+			for (unsigned x = 0; x < this->xLength; x++) {
+				if (grid[y][x] > INT16_MIN) {
+					add_colour_to_layer(layer, y, x, col);
+				}
 			}
 		}
 	}

@@ -23,8 +23,8 @@ return {
 			spd = 5,
 			def = 5,
 		}
-		Map:newFaction("Heroes")
-		Map:newFaction("Enemies")
-		Map:addUnit(tmpUnit, "Enemies", 3, 3)
+		Map:new_faction("Heroes") -- the player is always faction 0
+		Map:new_faction("Enemies")
+		Map:add_unit("Enemies", tmpUnit, 3, 3)
 	end,
 }

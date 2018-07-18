@@ -41,13 +41,10 @@ OverMap::OverMap(const char *directory) {
 		perror("getcwd() error");
 	this->L = luaL_newstate();
 	luaopen_Map(L);
-	//lua_pop(L, 1);
-	//chdir(directory);
-	//this->in_directory();
-	luaL_dostring(L, "Map:load(\"../data/level1/forest.lua\")");
-	luaL_dostring(L, "Map:new_faction(\"Bandit\")");
-	luaL_dostring(L, "Map:add_unit(\"Bandit\", {name = \"John\", icon = \"X<\", hp = 10, move = 5, str = 5, spd = 5, def = 5}, 5, 5)");
-	//chdir(cwd);
+	lua_pop(L, 1);
+	chdir(directory);
+	this->in_directory();
+	chdir(cwd);
 	this->map = get_map(L);
 }
 
@@ -57,9 +54,29 @@ OverMap::~OverMap(void) {
 }
 
 bool OverMap::in_directory(void) {
-	if (luaL_dofile(L, "level.lua")) // load the file into the lua state
+	if (luaL_dofile(L, "level.lua")){ // load the file into the lua state
+		fprintf(stderr, "%s\n", lua_tostring(L, -1));
 		return false;
+	}
 	lua_getfield(L, -1, "win");
 	this->winRef = luaL_ref(L, LUA_REGISTRYINDEX);
+
+	lua_getfield(L, -1, "map");
+	lua_getglobal(L, "Map");
+	lua_getfield(L, -1, "load");
+	lua_pushvalue(L, -2);
+	lua_pushvalue(L, -4);
+	lua_pcall(L, 2, 0, 0);
+	lua_pop(L, 2); // pop Map and map off the stack
+	
+	lua_getfield(L, -1, "starting");
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "builder");
+	if (lua_pcall(L, 0, 0, 0)) {
+		fprintf(stderr, "%s\n", lua_tostring(L, -1));
+		return false;
+	}
+	lua_pop(L, 1);
 	return true;
 }
