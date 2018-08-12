@@ -18,7 +18,7 @@ return {
 			name = "Grug",
 			icon = ";(",
 			hp = 10,
-			move = 5,
+			move = 10,
 			str = 5,
 			spd = 5,
 			def = 5,

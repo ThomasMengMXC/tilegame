@@ -8,8 +8,9 @@ extern "C" {
 #include "map.h"
 
 typedef enum Phase {
+	SETUP,
 	PLAYER,
-	ENEMY,
+	NONPLAYER,
 } Phase;
 
 class OverMap {
@@ -18,12 +19,13 @@ class OverMap {
 		Map *map;
 		Layer *mapLayer;
 		int winRef;
+		Phase phase;
 
 		OverMap(const char *directory);
 		~OverMap(void);
-		bool in_directory(void);
+
 	private:
-		Phase phase;
+		bool in_directory(void);
 };
 
 extern "C" {

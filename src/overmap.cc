@@ -7,14 +7,34 @@ extern "C" {
 #include "mapL.h"
 
 void update(Props *props) {
+	OverMap *om = (OverMap *) props->data;
+	switch (om->phase) {
+		case SETUP:
+			break;
+		case PLAYER:
+			break;
+		case NONPLAYER:
+			break;
+	}
 	draw_screen(props->screen);
 }
 
 int keyboard(Props *props, int ch) {
+	// these are basically the escape characters
 	switch (ch) {
 		case 'q':
 		case 'Q':
 			return -2;
+	}
+
+	OverMap *om = (OverMap *) props->data;
+	switch (om->phase) {
+		case SETUP:
+			break;
+		case PLAYER:
+			break;
+		case NONPLAYER:
+			break;
 	}
 	return -1;
 }
@@ -46,6 +66,8 @@ OverMap::OverMap(const char *directory) {
 	this->in_directory();
 	chdir(cwd);
 	this->map = get_map(L);
+
+	this->phase = SETUP;
 }
 
 OverMap::~OverMap(void) {
@@ -53,6 +75,7 @@ OverMap::~OverMap(void) {
 	lua_close(this->L);
 }
 
+// private
 bool OverMap::in_directory(void) {
 	if (luaL_dofile(L, "level.lua")){ // load the file into the lua state
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));
