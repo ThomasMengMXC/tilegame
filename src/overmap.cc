@@ -20,6 +20,7 @@ void update(Props *props) {
 }
 
 int keyboard(Props *props, int ch) {
+	OverMap *om = (OverMap *) props->data;
 	// these are basically the escape characters
 	switch (ch) {
 		case 'q':
@@ -27,9 +28,13 @@ int keyboard(Props *props, int ch) {
 			return -2;
 	}
 
-	OverMap *om = (OverMap *) props->data;
 	switch (om->phase) {
 		case SETUP:
+			switch(ch) {
+				case KEY_BACKSPACE:
+					add_icon_to_layer(om->mapLayer, 0, 0, "!!", 2);
+					break;
+			}
 			break;
 		case PLAYER:
 			break;
@@ -46,6 +51,7 @@ void arrival(Props *props, int sceneNum) {
 	OverMap *om = (OverMap *) props->data;
 	om->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);
 	om->map->draw(om->mapLayer);
+	om->map->draw();
 }
 
 void departure(Props *props) {

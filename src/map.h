@@ -24,6 +24,7 @@ class Map {
 		~Map(void);
 
 		void draw(Layer *layer);
+		void draw(void);
 
 		int new_faction(void);
 
@@ -43,6 +44,8 @@ class Map {
 		std::map<unsigned, short **> moveGrids; // unitID -> moveGrid
 		std::map<unsigned, Unit *> units; // unitID -> unit
 		std::map<unsigned, Faction> factions; // factionID -> faction
+
+		Layer *layer; // Layer for drawing on
 
 		bool place_unit(Unit *unit, std::pair<unsigned, unsigned> pos);
 		bool remove_unit(std::pair<unsigned, unsigned> pos);

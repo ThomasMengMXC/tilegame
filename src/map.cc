@@ -19,6 +19,7 @@ Map::Map(const char *filename) {
 	unsigned yLength = 0, xLength = 0;
 	this->unitIDs = 0;
 	this->factionIDs = 0;
+	this->layer = NULL;
 	lua_State *L = luaL_newstate();
 	if (luaL_dofile(L, filename)) // load the file into the lua state
 		goto error;
@@ -82,7 +83,19 @@ Map::~Map(void) {
 /*
  * Draws the map to a layer
  */
+void Map::draw(void) {
+	this->draw(layer);
+}
+
+/*
+ * Non-void version
+ */
 void Map::draw(Layer *layer) {
+	if (layer != NULL)
+		this->layer = layer;
+	else
+		return;
+
 	// clears the layer so that it will be empty when we draw on it
 	clear_layer(layer);
 	// iterate through every tile
@@ -388,11 +401,10 @@ static void free_grid(Tile **grid, unsigned yLength, unsigned xLength) {
 static Tile *init_row(lua_State *L, int index, unsigned rowNum) {
 	unsigned length = lua_objlen(L, -1);
 	const char *string = lua_tostring(L, -1);
-	char subbuff[2]; // for the substring key
+	char subbuff[2] = {0}; // for the substring key
 	Tile *row = new Tile[length]();
 	for (unsigned i = 0; i < length; i++) {
-		memcpy(subbuff, &string[i], 1); // getting the substring
-		subbuff[1] = '\0';
+		subbuff[0] = string[i];
 		lua_pushstring(L, subbuff);
 		lua_gettable(L, index);
 		if (lua_type(L, -1) != LUA_TTABLE)
