@@ -6,6 +6,7 @@ extern "C" {
 #include "backstage.h"
 #include "mapL.h"
 
+extern "C" {
 void update(Props *props) {
 	OverMap *om = (OverMap *) props->data;
 	switch (om->phase) {
@@ -59,6 +60,7 @@ void departure(Props *props) {
 	delete om;
 	free_screen(props->screen);
 	props->screen = NULL;
+}
 }
 
 OverMap::OverMap(const char *directory) {

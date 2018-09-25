@@ -1,7 +1,7 @@
 DIRECTORY = $(HOME)/usr
 CFLAGS = -Wall -pedantic -g -std=gnu++11 -O3 -I$(DIRECTORY)/include
 LFLAGS = -L$(DIRECTORY)/lib -Wl,-R$(DIRECTORY)/lib
-LIBS = -ltheatre -llua-5.1
+LIBS = -ltheatre `pkg-config --libs luajit`
 CC = g++
 
 SOURCES = $(wildcard *.cc)
