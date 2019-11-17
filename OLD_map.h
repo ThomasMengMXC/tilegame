@@ -4,8 +4,11 @@
 extern "C" {
 #include <theatre/layer.h> // so that the map can be drawn onto a layer
 }
-#include <vector> // for the maps from ID to whatever
+#include <map> // for the maps from ID to whatever
 #include "tile.h" // the map has a grid of tiles
+
+// Faction is just a map of unitIDs to units.
+typedef std::map<unsigned, Unit *> Faction;
 
 /*
  * Map is a class which holds all the information about things which appear
@@ -35,12 +38,23 @@ class Map {
 		void event_tile(unsigned y, unsigned x,
 				const char *name, Colour col, int eventID);
 	private:
+		unsigned unitIDs; // keeps track of the used unitIDs
+		unsigned factionIDs; // keeps track of the used factionIDs
 		Tile **grid; // the grid
-		std::vector<Unit *> units; // unitID -> unit
-		std::vector<std::vector<Unit *>> factions; // factionID -> faction
-		Layer *layer;
+		std::map<unsigned, short **> moveGrids; // unitID -> moveGrid
+		std::map<unsigned, Unit *> units; // unitID -> unit
+		std::map<unsigned, Faction> factions; // factionID -> faction
 
-		bool place_unit(Unit *unit, Coordinate pos);
+		Layer *layer; // Layer for drawing on
+
+		bool place_unit(Unit *unit, std::pair<unsigned, unsigned> pos);
+		bool remove_unit(std::pair<unsigned, unsigned> pos);
+
+		short **init_move_grid(void);
+		void free_move_grid(short **grid);
+		void unit_range(unsigned unitID);
+		std::pair<unsigned, unsigned>
+				closest_without_unit(std::pair<unsigned, unsigned> pos);
 };
 
 #endif

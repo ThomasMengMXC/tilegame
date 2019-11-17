@@ -1,7 +1,7 @@
 DIRECTORY = $(HOME)/usr
-CFLAGS = -Wall -pedantic -g -std=gnu++11 -O3 -I$(DIRECTORY)/include
+CFLAGS = -Wall -pedantic -g -std=c++11 -O3 -I$(DIRECTORY)/include
 LFLAGS = -L$(DIRECTORY)/lib -Wl,-R$(DIRECTORY)/lib
-LIBS = -ltheatre `pkg-config --libs luajit`
+LIBS = -ltheatre -lluajit-5.1
 CC = g++
 
 SOURCES = $(wildcard *.cc)
@@ -10,7 +10,10 @@ OBJECTS = $(SOURCES:.cc=.o)
 all: game
 
 play: all
-	valgrind --leak-check=full ./game 2> meme
+	valgrind --leak-check=full --track-origins=yes ./game 2> meme
+
+analyse:
+	clang-tidy -fix *.cc -- -I$(DIRECTORY)/include -std=c++11
 
 memtest: all
 	valgrind --tool=massif ./game

@@ -32,7 +32,7 @@ int keyboard(Props *props, int ch) {
 	switch (om->phase) {
 		case SETUP:
 			switch(ch) {
-				case KEY_BACKSPACE:
+				case KEY_LEFT:
 					add_icon_to_layer(om->mapLayer, 0, 0, "!!", 2);
 					break;
 			}
@@ -47,7 +47,7 @@ int keyboard(Props *props, int ch) {
 
 void arrival(Props *props, int sceneNum) {
 	//Backstage *bs = props->backstage;
-	props->screen = (Screen *) init_screen(0, 0);
+	props->screen = (Screen *) init_screen(25, 40);
 	props->data = new OverMap("../data/level1");
 	OverMap *om = (OverMap *) props->data;
 	om->mapLayer = add_layer_to_scr(props->screen, 0, 0, 25, 40);

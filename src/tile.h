@@ -3,6 +3,7 @@
 
 extern "C" {
 #include <theatre/colour.h> // for the tile's colour
+#include <theatre/coordinate.h> // for the tile's colour
 }
 #include "unit.h" // for storing the unit
 
@@ -13,7 +14,7 @@ class Tile {
 		char icon[3];
 		Colour colour;
 		int type; // the type will be defined by the Lua scripts
-		std::pair<unsigned, unsigned> pos;
+		Coordinate pos;
 		Unit *unit;
 
 		// event stuff, each tile can have 1 event

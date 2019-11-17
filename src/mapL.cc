@@ -65,6 +65,7 @@ static int add_unit(lua_State *L) {
 	unsigned factionID;
 	Unit *unit;
 	unsigned y, x;
+	int unitID;
 	if (lua_type(L, 1) != LUA_TTABLE
 			|| lua_type(L, 2) != LUA_TSTRING 
 			|| lua_type(L, 3) != LUA_TTABLE
@@ -87,7 +88,10 @@ static int add_unit(lua_State *L) {
 	// get y and x
 	y = lua_tointeger(L, 4);
 	x = lua_tointeger(L, 5);
-	lua_pushinteger(L, map->add_unit(factionID, unit, y, x));
+	unitID = map->add_unit(factionID, unit, y, x);
+	if (unitID == -1)
+		delete unit;
+	lua_pushinteger(L, unitID);
 	goto out;
 error:
 	fprintf(stderr, "Failed in add_unit, arguments incorrect\n");
@@ -171,28 +175,28 @@ static Unit *lua_tounit(lua_State *L, int index) {
 	lua_getfield(L, -1, "hp");
 	stat = lua_tointeger(L, -1);
 	lua_pop(L, 1);
-	unit->maxHp = stat;
-	unit->hp = unit->maxHp;
+	unit->base.maxHp = stat;
 
 	lua_getfield(L, -1, "move");
 	stat = lua_tointeger(L, -1);
 	lua_pop(L, 1);
-	unit->move = stat;
+	unit->base.move = stat;
 
 	lua_getfield(L, -1, "str");
 	stat = lua_tointeger(L, -1);
 	lua_pop(L, 1);
-	unit->str = stat;
+	unit->base.str = stat;
 
 	lua_getfield(L, -1, "spd");
 	stat = lua_tointeger(L, -1);
 	lua_pop(L, 1);
-	unit->spd = stat;
+	unit->base.spd = stat;
 
 	lua_getfield(L, -1, "def");
 	stat = lua_tointeger(L, -1);
 	lua_pop(L, 2); // pop both def and the table
-	unit->def = stat;
+	unit->base.def = stat;
+	unit->modified = unit->base;
 	return unit;
 }
 
